@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+  <EditText
+      android:id="@+id/edtPhone"
+      android:hint="Số điện thoại"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content" />
+
+  <Button
+      android:id="@+id/btnSendOtp"
+      android:text="Gửi OTP"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content" />
+
+  <EditText
+      android:id="@+id/edtOtp"
+      android:hint="Mã OTP"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content" />
+
+  <Button
+      android:id="@+id/btnVerifyOtp"
+      android:text="Xác minh OTP"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content" />
+
+  <EditText
+      android:id="@+id/edtUsername"
+      android:hint="Tên người dùng"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content" />
+
+  <EditText
+      android:id="@+id/edtPassword"
+      android:hint="Mật khẩu"
+      android:inputType="textPassword"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content" />
+
+  <Button
+      android:id="@+id/btnSaveUser"
+      android:text="Lưu người dùng"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content" />
+
+</LinearLayout>
