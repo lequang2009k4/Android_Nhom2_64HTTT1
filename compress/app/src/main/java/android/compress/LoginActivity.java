@@ -17,9 +17,9 @@ public class LoginActivity extends AppCompatActivity {
     private EditText usernameEditText;
     private TextInputEditText passwordEditText;
     private CheckBox rememberMeCheckBox;
-    private TextView forgotPasswordTextView;
+    private TextView forgotPasswordTextView; // Đảm bảo đã khai báo
     private Button loginButton;
-    private TextView registerTextView; // Đảm bảo đã khai báo
+    private TextView registerTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
         rememberMeCheckBox = findViewById(R.id.rememberMeCheckBox);
         forgotPasswordTextView = findViewById(R.id.forgotPasswordTextView);
         loginButton = findViewById(R.id.loginButton);
-        registerTextView = findViewById(R.id.registerTextView); // Ánh xạ
+        registerTextView = findViewById(R.id.registerTextView);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,7 +42,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (username.isEmpty() || password.isEmpty()) {
                     Toast.makeText(LoginActivity.this, "Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu.", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(LoginActivity.this, "Đăng nhập với Tên: " + username + " và Mật khẩu: " + password, Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this, "Đang đăng nhập với Tên: " + username + " và Mật khẩu: " + password, Toast.LENGTH_LONG).show();
                     if (rememberMeCheckBox.isChecked()) {
                         Toast.makeText(LoginActivity.this, "Bạn đã chọn 'Nhớ thông tin đăng nhập'", Toast.LENGTH_SHORT).show();
                     }
@@ -54,20 +54,21 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        // Đã thay đổi: Chuyển sang ForgotPasswordActivity khi nhấn "Quên mật khẩu"
         forgotPasswordTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(LoginActivity.this, "Bạn đã nhấn 'Quên mật khẩu'", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(LoginActivity.this, ForgotPasswordActivity.class);
+                startActivity(intent);
+                // Bạn có thể không cần finish() ở đây nếu muốn người dùng có thể quay lại màn hình đăng nhập bằng nút back
             }
         });
 
-        // Đã thay đổi: Chuyển sang RegisterActivity khi nhấn "Đăng ký"
         registerTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivity(intent);
-                // Bạn có thể không cần finish() ở đây nếu muốn người dùng có thể quay lại màn hình đăng nhập bằng nút back
             }
         });
     }
