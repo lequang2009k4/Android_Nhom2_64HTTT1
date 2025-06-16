@@ -1,34 +1,40 @@
-package android.compress; // Thay đổi thành tên gói của bạn
+package android.compress; // Thay 'com.example.yourappname' bằng package name của bạn
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private EditText usernameEditText;
-    private EditText phoneEditText;
-    private TextInputEditText passwordEditText;
-    private Button registerButton;
-    private TextView loginTextView;
+    private TextInputEditText usernameEditText, phoneEditText, passwordEditText;
+    private MaterialButton registerButton;
+    private TextView loginLinkTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        usernameEditText = findViewById(R.id.usernameRegisterEditText);
-        phoneEditText = findViewById(R.id.phoneRegisterEditText);
-        passwordEditText = findViewById(R.id.passwordRegisterEditText);
-        registerButton = findViewById(R.id.registerButton);
-        loginTextView = findViewById(R.id.loginTextView);
+        // Ẩn Action Bar
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
 
+        // Ánh xạ các view
+        usernameEditText = findViewById(R.id.edit_text_register_username);
+        phoneEditText = findViewById(R.id.edit_text_phone);
+        passwordEditText = findViewById(R.id.edit_text_register_password);
+        registerButton = findViewById(R.id.button_register);
+        loginLinkTextView = findViewById(R.id.text_login_link);
+
+        // Sự kiện click cho nút Đăng ký
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -37,28 +43,21 @@ public class RegisterActivity extends AppCompatActivity {
                 String password = passwordEditText.getText().toString().trim();
 
                 if (username.isEmpty() || phone.isEmpty() || password.isEmpty()) {
-                    Toast.makeText(RegisterActivity.this, "Vui lòng điền đầy đủ thông tin.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
                 } else {
-                    // Đây là nơi bạn sẽ thực hiện logic đăng ký thực tế
-                    // Ví dụ: Gửi dữ liệu đăng ký và yêu cầu OTP đến server
-                    Toast.makeText(RegisterActivity.this, "Đang đăng ký và gửi OTP đến SĐT: " + phone, Toast.LENGTH_LONG).show();
-
-                    // Chuyển sang OtpVerificationActivity để nhập OTP
-                    Intent intent = new Intent(RegisterActivity.this, OtpVerificationActivity.class);
-                    // Bạn có thể gửi dữ liệu như số điện thoại qua Intent nếu cần
-                    intent.putExtra("phone_number", phone);
-                    startActivity(intent);
-                    // finish(); // Có thể không finish nếu bạn muốn người dùng có thể quay lại
+                    // TODO: Xử lý logic đăng ký với Firebase tại đây
+                    // Bước 1: Gửi OTP đến số điện thoại
+                    Toast.makeText(RegisterActivity.this, "Đang xử lý đăng ký...", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        loginTextView.setOnClickListener(new View.OnClickListener() {
+        // Sự kiện click cho link "Đăng nhập"
+        loginLinkTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                startActivity(intent);
-                finish();
+                // Quay lại màn hình Đăng nhập
+                finish(); // Đóng Activity hiện tại
             }
         });
     }
