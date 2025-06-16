@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "910897859147",
+    "project_id": "compress-109d5",
+    "storage_bucket": "compress-109d5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:910897859147:android:84204dc08bdecf4ba01bce",
+        "android_client_info": {
+          "package_name": "android.compress"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSqJfY9PHU4fwCDqvbXtYAEX1QdhvM9G0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
