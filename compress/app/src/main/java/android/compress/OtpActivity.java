@@ -1,5 +1,7 @@
 package android.compress; // Thay 'com.example.yourappname' bằng package name của bạn
 
+import android.app.ProgressDialog;
+import android.compress.models.FirebaseManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -18,97 +20,104 @@ import java.util.Objects;
 public class OtpActivity extends AppCompatActivity {
 
     private TextInputEditText otpEditText;
-    private MaterialButton confirmButton, resendButton;
-    private TextView countdownTextView, goBackTextView;
+    private MaterialButton resendButton;
+    private TextView countdownTextView;
     private CountDownTimer countDownTimer;
+    private ProgressDialog progressDialog;
 
-    // Biến để lưu thông tin từ Intent
-    private String username, phone, password;
-    private String flowType; // Sẽ là "register" hoặc "forgot_password"
+    // Các biến để nhận dữ liệu từ Intent
+    private String flowType, verificationId, username, phone, password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_otp);
-
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
 
-        // Lấy dữ liệu được gửi từ Activity trước
+        // Lấy dữ liệu từ Activity trước
         Intent intent = getIntent();
-        phone = intent.getStringExtra("phone");
         flowType = intent.getStringExtra("flow_type");
-
-        // Nếu là luồng đăng ký thì mới lấy username và password
+        verificationId = intent.getStringExtra("verificationId");
+        phone = intent.getStringExtra("phone");
         if ("register".equals(flowType)) {
             username = intent.getStringExtra("username");
             password = intent.getStringExtra("password");
         }
 
-        // Ánh xạ các view
+        // Ánh xạ View
         otpEditText = findViewById(R.id.edit_text_otp);
-        confirmButton = findViewById(R.id.button_confirm);
         resendButton = findViewById(R.id.button_resend_otp);
         countdownTextView = findViewById(R.id.text_countdown);
-        goBackTextView = findViewById(R.id.text_go_back);
+        MaterialButton confirmButton = findViewById(R.id.button_confirm);
 
-        setupListeners();
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Đang xác thực...");
+        progressDialog.setCancelable(false);
+
+        // Thiết lập sự kiện
+        confirmButton.setOnClickListener(v -> handleConfirmOtp());
+        findViewById(R.id.text_go_back).setOnClickListener(v -> finish());
+
         startCountdown();
     }
 
-    private void setupListeners() {
-        confirmButton.setOnClickListener(v -> {
-            String otp = Objects.requireNonNull(otpEditText.getText()).toString().trim();
-            if (otp.length() < 6) {
-                Toast.makeText(this, "Vui lòng nhập đủ 6 số OTP", Toast.LENGTH_SHORT).show();
-            } else {
-                // Xử lý logic dựa trên luồng (`flowType`)
-                if ("register".equals(flowType)) {
-                    verifyOtpForRegistration(otp);
-                } else if ("forgot_password".equals(flowType)) {
-                    verifyOtpForPasswordReset(otp);
+    /**
+     * Xử lý việc xác nhận OTP dựa trên luồng (đăng ký hoặc quên mật khẩu).
+     */
+    private void handleConfirmOtp() {
+        String otp = Objects.requireNonNull(otpEditText.getText()).toString().trim();
+        if (otp.length() < 6) {
+            Toast.makeText(this, "Vui lòng nhập đủ 6 số OTP", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        progressDialog.show();
+
+        if ("register".equals(flowType)) {
+            // Luồng đăng ký
+            FirebaseManager.User user = new FirebaseManager.User(username, phone, password);
+            FirebaseManager.verifyOtpAndRegisterUser(verificationId, otp, user, new FirebaseManager.SimpleCallback() {
+                @Override
+                public void onSuccess(String message) {
+                    progressDialog.dismiss();
+                    Toast.makeText(OtpActivity.this, message, Toast.LENGTH_LONG).show();
+                    // Chuyển về màn hình đăng nhập sau khi đăng ký thành công
+                    Intent intent = new Intent(OtpActivity.this, LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
                 }
-            }
-        });
 
-        resendButton.setOnClickListener(v -> {
-            // TODO: Xử lý gửi lại OTP với Firebase
-            Toast.makeText(this, "Đang gửi lại mã OTP...", Toast.LENGTH_SHORT).show();
-            startCountdown();
-        });
+                @Override
+                public void onFailure(String message) {
+                    progressDialog.dismiss();
+                    Toast.makeText(OtpActivity.this, message, Toast.LENGTH_LONG).show();
+                }
+            });
+        } else if ("forgot_password".equals(flowType)) {
+            // Luồng quên mật khẩu
+            FirebaseManager.verifyOtp(verificationId, otp, new FirebaseManager.SimpleCallback() {
+                @Override
+                public void onSuccess(String message) {
+                    progressDialog.dismiss();
+                    Toast.makeText(OtpActivity.this, message, Toast.LENGTH_SHORT).show();
+                    // Chuyển sang màn hình tạo mật khẩu mới
+                    Intent intent = new Intent(OtpActivity.this, ResetPasswordActivity.class);
+                    intent.putExtra("phone", phone);
+                    startActivity(intent);
+                    finish();
+                }
 
-        goBackTextView.setOnClickListener(v -> {
-            // Quay lại màn hình trước đó
-            finish();
-        });
+                @Override
+                public void onFailure(String message) {
+                    progressDialog.dismiss();
+                    Toast.makeText(OtpActivity.this, message, Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
-
-    /**
-     * Xác thực OTP cho luồng đăng ký tài khoản mới.
-     * @param otp Mã OTP người dùng nhập.
-     */
-    private void verifyOtpForRegistration(String otp) {
-        // TODO: Xử lý xác thực OTP và tạo tài khoản mới với Firebase.
-        Toast.makeText(this, "Đang xác thực OTP để Đăng ký...", Toast.LENGTH_SHORT).show();
-        // Nếu thành công -> Chuyển đến màn hình chính của ứng dụng.
-    }
-
-    /**
-     * Xác thực OTP cho luồng lấy lại mật khẩu.
-     * @param otp Mã OTP người dùng nhập.
-     */
-    private void verifyOtpForPasswordReset(String otp) {
-        // TODO: Xử lý xác thực OTP với Firebase.
-        Toast.makeText(this, "Xác thực OTP thành công!", Toast.LENGTH_SHORT).show();
-
-        // Nếu OTP đúng, chuyển sang màn hình tạo mật khẩu mới.
-        Intent intent = new Intent(OtpActivity.this, ResetPasswordActivity.class);
-        intent.putExtra("phone", phone); // Gửi số điện thoại sang để xử lý bước cuối
-        startActivity(intent);
-        finish(); // Đóng màn hình OTP sau khi hoàn tất.
-    }
-
 
     /**
      * Bắt đầu hoặc khởi động lại bộ đếm ngược 90 giây.
@@ -139,7 +148,7 @@ public class OtpActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Rất quan trọng: Hủy timer để tránh rò rỉ bộ nhớ khi Activity bị hủy.
+        // Hủy timer để tránh rò rỉ bộ nhớ
         if (countDownTimer != null) {
             countDownTimer.cancel();
         }
