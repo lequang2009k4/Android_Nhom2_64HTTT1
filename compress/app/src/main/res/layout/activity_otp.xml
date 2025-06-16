@@ -1,10 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".OtpActivity">
+    android:fillViewport="true">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        tools:context=".OtpActivity">
+
+        <!-- Phần nền và logo ở trên cùng -->
+        <ImageView
+            android:id="@+id/background_top"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:contentDescription="@string/background_image_desc"
+            android:scaleType="centerCrop"
+            android:src="@drawable/background_main"
+            app:layout_constraintDimensionRatio="1:0.7"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/logo_app"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="48dp"
+            android:contentDescription="@string/logo_app_desc"
+            android:src="@drawable/logo_app"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Tiêu đề "Xác thực" -->
+        <TextView
+            android:id="@+id/text_otp_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:text="@string/otp_title"
+            android:textColor="#212121"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/background_top" />
+
+        <!-- Ô nhập Mã OTP -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/input_layout_otp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="32dp"
+            android:hint="@string/otp_code_hint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/text_otp_title"
+            app:layout_constraintTop_toBottomOf="@id/text_otp_title">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_text_otp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLength="6" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Text hướng dẫn -->
+        <TextView
+            android:id="@+id/text_otp_info"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:lineSpacingExtra="4dp"
+            android:text="@string/otp_info"
+            android:textColor="#616161"
+            app:layout_constraintEnd_toEndOf="@id/input_layout_otp"
+            app:layout_constraintStart_toStartOf="@id/input_layout_otp"
+            app:layout_constraintTop_toBottomOf="@id/input_layout_otp" />
+
+        <!-- Nút Gửi lại mã OTP -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_resend_otp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/resend_otp_button"
+            android:textAllCaps="false"
+            android:textColor="#F57C00"
+            app:cornerRadius="8dp"
+            app:layout_constraintEnd_toEndOf="@id/text_otp_info"
+            app:layout_constraintStart_toStartOf="@id/text_otp_info"
+            app:layout_constraintTop_toBottomOf="@id/text_otp_info"
+            app:strokeColor="#F57C00" />
+
+        <!-- Text đếm ngược -->
+        <TextView
+            android:id="@+id/text_countdown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="#757575"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="@id/button_resend_otp"
+            app:layout_constraintStart_toStartOf="@id/button_resend_otp"
+            app:layout_constraintTop_toBottomOf="@id/button_resend_otp"
+            tools:text="Vui lòng chờ 90 giây để gửi lại" />
+
+        <!-- Nút Xác nhận -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_confirm"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="#F57C00"
+            android:text="@string/confirm_button"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            app:cornerRadius="8dp"
+            app:layout_constraintEnd_toEndOf="@id/button_resend_otp"
+            app:layout_constraintStart_toStartOf="@id/button_resend_otp"
+            app:layout_constraintTop_toBottomOf="@id/text_countdown" />
+
+        <!-- Link Quay lại -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="32dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/button_confirm"
+            app:layout_constraintVertical_bias="0.0">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/change_phone_prompt"
+                android:textColor="#616161"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/text_go_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="@string/go_back_link"
+                android:textColor="#F57C00"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
