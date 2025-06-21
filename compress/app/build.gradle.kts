@@ -15,6 +15,22 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        externalNativeBuild {
+            cmake {
+                cppFlags ("")
+            }
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path ("src/main/cpp/CMakeLists.txt")
+        }
+    }
+    sourceSets {
+        getByName("main") {
+            jniLibs.srcDirs("src/main/jniLibs")
+        }
     }
 
     buildTypes {

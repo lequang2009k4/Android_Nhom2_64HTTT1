@@ -23,6 +23,12 @@
         android:theme="@style/Theme.Compress"
         tools:targetApi="31">
         <activity
+            android:name=".LoadingCompressActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LoadingCompress"
+            android:exported="false" />
+        <activity
             android:name=".DetailActivity"
             android:exported="false" />
         <activity

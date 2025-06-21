@@ -6,8 +6,10 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,6 +24,8 @@ public class DetailActivity extends AppCompatActivity {
     private TextView tvFileName;
     private TextView tvUploadDate;
     private TextView tvFileSize;
+    private Bitmap bitmap;
+
 
     // handle get file size for shot image
     private static class BitmapSizeTask extends android.os.AsyncTask<Bitmap, Void, String> {
@@ -57,6 +61,7 @@ public class DetailActivity extends AppCompatActivity {
         TextView tvFileName = findViewById(R.id.tv_file_name);
         TextView tvFileSize = findViewById(R.id.tv_file_size);
         TextView tvUploadDate = findViewById(R.id.tv_upload_date);
+        Button btnCompress = findViewById(R.id.btn_compress_now);
 
 
         Intent intent = getIntent();
@@ -65,6 +70,7 @@ public class DetailActivity extends AppCompatActivity {
         String fileName = "Unknown";
         String fileSize = "Unknown";
         String uploadDate = "Unknown";
+
 
         if (imageUriStr != null) {
             Uri imageUri = Uri.parse(imageUriStr);
@@ -81,7 +87,7 @@ public class DetailActivity extends AppCompatActivity {
             // Get upload date from Intent
             uploadDate = getIntent().getStringExtra("upload_date");
         } else if (intent.hasExtra("image_bitmap")) {
-            Bitmap bitmap = intent.getParcelableExtra("image_bitmap");
+            bitmap = intent.getParcelableExtra("image_bitmap");
             new BitmapSizeTask(tvFileSize).execute(bitmap);
             imageView.setImageBitmap(bitmap);
             fileName = "Ảnh chụp";
@@ -93,5 +99,15 @@ public class DetailActivity extends AppCompatActivity {
         tvFileName.setText(fileName);
         tvFileSize.setText(fileSize);
         tvUploadDate.setText(uploadDate);
+
+        btnCompress.setOnClickListener(v -> {
+            Intent intentNext = new Intent(DetailActivity.this, LoadingCompressActivity.class);
+            if (imageUriStr != null) {
+                intentNext.putExtra("image_uri", imageUriStr);
+            } else if (bitmap != null) {
+                intentNext.putExtra("image_bitmap", bitmap);
+            }
+            startActivity(intentNext);
+        });
     }
 }
