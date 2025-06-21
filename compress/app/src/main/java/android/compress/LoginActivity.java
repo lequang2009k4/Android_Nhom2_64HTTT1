@@ -62,13 +62,13 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, "Đăng nhập thành công! Role: " + user.getRole(), Toast.LENGTH_LONG).show();
 
                 // TODO: Dựa vào user.getRole() để chuyển đến màn hình tương ứng (User/Admin)
-                // Ví dụ:
-                // if ("admin".equals(user.getRole())) {
-                //     startActivity(new Intent(LoginActivity.this, AdminDashboardActivity.class));
-                // } else {
-                //     startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                // }
-                // finish();
+//                 Ví dụ:
+                 if ("admin".equals(user.getRole())) {
+//                     startActivity(new Intent(LoginActivity.this, AdminDashboardActivity.class));
+                 } else {
+                     startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                 }
+                 finish();
             }
 
             @Override
