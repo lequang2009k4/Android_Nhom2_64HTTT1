@@ -17,14 +17,30 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class UploadActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_PICK_IMAGE = 1001;
     private static final int REQUEST_CODE_TAKE_PHOTO = 1002;
     private static final int REQUEST_CODE_CAMERA_PERMISSION = 2001;
     private Button btnConfirm;
+    private Uri selectedImageUri;
+    private Bitmap photoBitmap;
 
     private ImageView imagePlaceholder;
+
+    //    @Override
+    // reset
+    //    protected void onResume() {
+    //        super.onResume();
+    //        selectedImageUri = null;
+    //        photoBitmap = null;
+    //        imagePlaceholder.setImageResource(R.drawable.ic_image_placeholder); // Use your placeholder image
+    //        btnConfirm.setEnabled(false);
+    //    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +53,17 @@ public class UploadActivity extends AppCompatActivity {
 
         btnConfirm.setOnClickListener(v -> {
             Intent intent = new Intent(UploadActivity.this, DetailActivity.class);
+            if (selectedImageUri != null) {
+                intent.putExtra("image_uri", selectedImageUri.toString());
+                // Lấy tên file, size, ngày upload nếu cần
+            }
+            if (photoBitmap != null) {
+                // Truyền bitmap qua intent (không khuyến khích với ảnh lớn)
+                intent.putExtra("image_bitmap", photoBitmap);
+
+            }
+            String uploadDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
+            intent.putExtra("upload_date", uploadDate);
             startActivity(intent);
         });
 
@@ -83,22 +110,18 @@ public class UploadActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == REQUEST_CODE_PICK_IMAGE && data != null) {
-                Uri selectedImageUri = data.getData();
+                selectedImageUri = data.getData();
                 if (selectedImageUri != null) {
                     imagePlaceholder.setImageURI(selectedImageUri);
-                    Toast.makeText(this, "Upload Success", Toast.LENGTH_SHORT).show();
                     btnConfirm.setEnabled(true);
-                } else {
-                    Toast.makeText(this, "Không lấy được ảnh", Toast.LENGTH_SHORT).show();
+                    photoBitmap = null;
                 }
             } else if (requestCode == REQUEST_CODE_TAKE_PHOTO && data != null) {
-                Bitmap photo = (Bitmap) data.getExtras().get("data");
-                if (photo != null) {
-                    imagePlaceholder.setImageBitmap(photo);
-                    Toast.makeText(this, "Shot Success", Toast.LENGTH_SHORT).show();
+                photoBitmap = (Bitmap) data.getExtras().get("data");
+                if (photoBitmap != null) {
+                    imagePlaceholder.setImageBitmap(photoBitmap);
                     btnConfirm.setEnabled(true);
-                } else {
-                    Toast.makeText(this, "Không lấy được ảnh chụp", Toast.LENGTH_SHORT).show();
+                    selectedImageUri = null;
                 }
             }
         }

@@ -5,37 +5,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F8F8F8"
-    tools:context=".DetailActivity"> <androidx.cardview.widget.CardView
-    android:id="@+id/card_graphic_design"
-    android:layout_width="match_parent"
-    android:layout_height="250dp"
-    android:layout_marginStart="24dp"
-    android:layout_marginTop="32dp"
-    android:layout_marginEnd="24dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="0dp"
-    app:cardBackgroundColor="@android:color/transparent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent">
+    tools:context=".DetailActivity">
 
-    <FrameLayout
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_graphic_design"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/gradient_purple_background">
+        android:layout_height="250dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="24dp"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Graphic\nDESIGN"
-            android:textColor="@android:color/white"
-            android:textSize="48sp"
-            android:textStyle="bold"
-            android:gravity="center" />
-    </FrameLayout>
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="Ảnh đã upload"
+            android:scaleType="centerCrop" />
 
-</androidx.cardview.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
     <TextView
         android:id="@+id/tv_file_info_title"
@@ -57,9 +50,9 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
+        app:cardBackgroundColor="@android:color/white"
         app:cardCornerRadius="8dp"
         app:cardElevation="0dp"
-        app:cardBackgroundColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_file_info_title">
@@ -74,8 +67,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingBottom="8dp"
-                android:paddingTop="8dp">
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
 
                 <TextView
                     android:layout_width="0dp"
@@ -90,10 +83,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.6"
+                    android:gravity="end"
                     android:text="anh-nong.jpg"
                     android:textColor="@android:color/black"
-                    android:textSize="16sp"
-                    android:gravity="end" />
+                    android:textSize="16sp" />
             </LinearLayout>
 
             <View
@@ -105,8 +98,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingBottom="8dp"
-                android:paddingTop="8dp">
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
 
                 <TextView
                     android:layout_width="0dp"
@@ -121,10 +114,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.6"
+                    android:gravity="end"
                     android:text="29/05/2025"
                     android:textColor="@android:color/black"
-                    android:textSize="16sp"
-                    android:gravity="end" />
+                    android:textSize="16sp" />
             </LinearLayout>
 
             <View
@@ -136,8 +129,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingBottom="8dp"
-                android:paddingTop="8dp">
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
 
                 <TextView
                     android:layout_width="0dp"
@@ -152,10 +145,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.6"
+                    android:gravity="end"
                     android:text="2mb"
                     android:textColor="@android:color/black"
-                    android:textSize="16sp"
-                    android:gravity="end" />
+                    android:textSize="16sp" />
             </LinearLayout>
 
         </LinearLayout>
@@ -169,11 +162,11 @@
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="32dp"
         android:backgroundTint="#F8B366"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
         android:text="Nén ngay"
         android:textColor="@android:color/white"
         android:textSize="18sp"
-        android:paddingTop="12dp"
-        android:paddingBottom="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
