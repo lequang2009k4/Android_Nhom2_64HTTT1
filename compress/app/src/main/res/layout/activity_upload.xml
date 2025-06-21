@@ -1,10 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F8F8F8"
     tools:context=".UploadActivity">
+
+    <TextView
+        android:id="@+id/tv_upload_file_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="32dp"
+        android:text="Upload file"
+        android:textColor="@android:color/black"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_image_placeholder"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="48dp"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="#F8B366"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_upload_file_title">
+
+        <ImageView
+            android:id="@+id/image_placeholder"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_image_placeholder"
+            android:contentDescription="Image Placeholder" />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/tv_choose_option"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Hãy chọn"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/card_image_placeholder" />
+
+    <LinearLayout
+        android:id="@+id/layout_upload_options"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_choose_option">
+
+        <Button
+            android:id="@+id/btn_upload"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_border_orange"
+            android:drawableStart="@drawable/ic_upload"
+            android:drawablePadding="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="Tải lên"
+            android:textColor="#F8B366"
+            android:textStyle="bold"
+            style="?android:attr/buttonBarButtonStyle"/>
+
+        <Button
+            android:id="@+id/btn_take_photo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_border_orange"
+            android:drawableStart="@drawable/ic_camera"
+            android:drawablePadding="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="Chụp ảnh"
+            android:textColor="#F8B366"
+            android:textStyle="bold"
+            style="?android:attr/buttonBarButtonStyle"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_supported_formats_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="32dp"
+        android:text="Định dạng hỗ trợ: jpg,\njpeg, png"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_upload_options" />
+
+    <TextView
+        android:id="@+id/tv_max_size_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:text="Kích thước không quá\n50MB"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        android:gravity="end"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tv_supported_formats_label" />
+
+    <Button
+        android:id="@+id/btn_confirm"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="32dp"
+        android:backgroundTint="#F8B366"
+        android:text="Xác nhận"
+        android:enabled="false"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
