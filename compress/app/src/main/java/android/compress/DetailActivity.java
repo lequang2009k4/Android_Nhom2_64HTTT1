@@ -26,8 +26,7 @@ public class DetailActivity extends AppCompatActivity {
     private TextView tvFileSize;
     private Bitmap bitmap;
 
-
-    // handle get file size for shot image
+    // Add this inner class to your DetailActivity
     private static class BitmapSizeTask extends android.os.AsyncTask<Bitmap, Void, String> {
         private final WeakReference<TextView> tvFileSizeRef;
 
@@ -39,15 +38,14 @@ public class DetailActivity extends AppCompatActivity {
         protected String doInBackground(Bitmap... bitmaps) {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
             bitmaps[0].compress(Bitmap.CompressFormat.JPEG, 100, stream);
-            int sizeInKB = stream.toByteArray().length / 1024;
-            return sizeInKB + " KB";
+            return (stream.toByteArray().length / 1024) + " KB";
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(String fileSizeStr) {
             TextView tvFileSize = tvFileSizeRef.get();
             if (tvFileSize != null) {
-                tvFileSize.setText(result);
+                tvFileSize.setText(fileSizeStr);
             }
         }
     }
@@ -88,13 +86,14 @@ public class DetailActivity extends AppCompatActivity {
             uploadDate = getIntent().getStringExtra("upload_date");
         } else if (intent.hasExtra("image_bitmap")) {
             bitmap = intent.getParcelableExtra("image_bitmap");
-            new BitmapSizeTask(tvFileSize).execute(bitmap);
             imageView.setImageBitmap(bitmap);
             fileName = "Ảnh chụp";
             uploadDate = getIntent().getStringExtra("upload_date");
             if (uploadDate != null) {
                 tvUploadDate.setText(uploadDate);
             }
+            // Calculate size in background
+            new BitmapSizeTask(tvFileSize).execute(bitmap);
         }
         tvFileName.setText(fileName);
         tvFileSize.setText(fileSize);
@@ -107,6 +106,7 @@ public class DetailActivity extends AppCompatActivity {
             } else if (bitmap != null) {
                 intentNext.putExtra("image_bitmap", bitmap);
             }
+            intentNext.putExtra("image_bitmap", bitmap);
             startActivity(intentNext);
         });
     }
