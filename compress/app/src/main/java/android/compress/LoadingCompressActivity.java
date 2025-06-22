@@ -48,22 +48,34 @@ public class LoadingCompressActivity extends AppCompatActivity {
         @Override
         protected File doInBackground(Object... params) {
             try {
-                Bitmap bitmap;
+                byte[] inputData;
+                
                 if (params[0] instanceof String) {
+                    // Đọc dữ liệu gốc từ file thay vì decode thành Bitmap
                     Uri imageUri = Uri.parse((String) params[0]);
                     InputStream inputStream = getContentResolver().openInputStream(imageUri);
-                    bitmap = BitmapFactory.decodeStream(inputStream);
+                    ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        byteStream.write(buffer, 0, bytesRead);
+                    }
+                    inputData = byteStream.toByteArray();
+                    inputStream.close();
+                    byteStream.close();
                 } else if (params[0] instanceof Bitmap) {
-                    bitmap = (Bitmap) params[0];
+                    // Nếu là Bitmap từ camera, nén với chất lượng phù hợp
+                    Bitmap bitmap = (Bitmap) params[0];
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    // Sử dụng chất lượng 95 thay vì 100 để tránh file quá lớn
+                    // nhưng vẫn đảm bảo chất lượng cao
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                    inputData = stream.toByteArray();
                 } else {
                     return null;
                 }
 
-                // Nén ảnh bằng native (JNI)
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                // Chuyển đổi Bitmap sang byte array
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-                byte[] inputData = stream.toByteArray();
+                // Nén ảnh bằng native (JNI) với dữ liệu gốc
                 byte[] compressedData = compressImage(inputData, 60); // 60 là chất lượng nén
 
                 // Lưu file nén ra cache
@@ -73,6 +85,7 @@ public class LoadingCompressActivity extends AppCompatActivity {
                 }
                 return file;
             } catch (Exception e) {
+                e.printStackTrace();
                 return null;
             }
         }
@@ -82,11 +95,20 @@ public class LoadingCompressActivity extends AppCompatActivity {
             if (file != null && file.exists()) {
                 String newFileName = System.currentTimeMillis() + "_compressed";
                 String uploadDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
+                
+                // Tính kích thước thực tế của file đã nén
+                long fileSizeBytes = file.length();
+                String fileSizeStr;
+                if (fileSizeBytes >= 1024 * 1024) {
+                    fileSizeStr = String.format("%.1f MB", fileSizeBytes / (1024.0 * 1024.0));
+                } else {
+                    fileSizeStr = (fileSizeBytes / 1024) + " KB";
+                }
 
                 Intent intent = new Intent(LoadingCompressActivity.this, ResultCompressActivity.class);
                 intent.putExtra("file_path", file.getAbsolutePath());
                 intent.putExtra("file_name", newFileName);
-                intent.putExtra("file_size", file.length() / 1024 + "kb");
+                intent.putExtra("file_size", fileSizeStr);
                 intent.putExtra("compression_date", uploadDate);
 
 //                new android.os.Handler().postDelayed(() -> {

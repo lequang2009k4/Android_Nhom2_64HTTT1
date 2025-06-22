@@ -36,9 +36,21 @@ public class DetailActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(Bitmap... bitmaps) {
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmaps[0].compress(Bitmap.CompressFormat.JPEG, 100, stream);
-            return (stream.toByteArray().length / 1024) + " KB";
+            // Tính kích thước ước tính dựa trên thông tin Bitmap mà không cần compress
+            Bitmap bitmap = bitmaps[0];
+            int width = bitmap.getWidth();
+            int height = bitmap.getHeight();
+            
+            // Ước tính kích thước JPEG dựa trên số pixel và tỷ lệ nén thông thường
+            // JPEG thường có tỷ lệ nén khoảng 1:10 đến 1:20 tùy thuộc vào độ phức tạp của ảnh
+            long estimatedSize = (long) width * height * 3 / 15; // Ước tính với tỷ lệ nén 1:15
+            
+            // Chuyển đổi sang KB hoặc MB
+            if (estimatedSize >= 1024 * 1024) {
+                return String.format("%.1f MB", estimatedSize / (1024.0 * 1024.0));
+            } else {
+                return (estimatedSize / 1024) + " KB";
+            }
         }
 
         @Override
