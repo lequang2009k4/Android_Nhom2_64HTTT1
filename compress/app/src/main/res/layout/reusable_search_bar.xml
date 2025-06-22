@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/image_view_avatar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/my_avatar"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full"
+        app:strokeColor="@color/white"
+        app:strokeWidth="1dp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/text_input_layout_search"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="12dp"
+        android:layout_toStartOf="@id/image_view_avatar"
+        app:boxCornerRadiusBottomEnd="24dp"
+        app:boxCornerRadiusBottomStart="24dp"
+        app:boxCornerRadiusTopEnd="24dp"
+        app:boxCornerRadiusTopStart="24dp"
+        app:endIconDrawable="@android:drawable/ic_menu_search"
+        app:endIconMode="custom">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_text_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Tìm kiếm file..."
+            android:inputType="text"
+            android:imeOptions="actionSearch"
+            android:maxLines="1" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+</RelativeLayout> 
