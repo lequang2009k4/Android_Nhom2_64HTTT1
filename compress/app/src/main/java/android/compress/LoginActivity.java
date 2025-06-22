@@ -1,9 +1,11 @@
-package android.compress; // Thay 'com.example.yourappname' bằng package name của bạn
+package android.compress;
 
 import android.app.ProgressDialog;
 import android.compress.models.FirebaseManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.CheckBox; // CẬP NHẬT: Thêm import
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +17,14 @@ public class LoginActivity extends AppCompatActivity {
 
     private TextInputEditText usernameEditText, passwordEditText;
     private ProgressDialog progressDialog;
+
+    // CẬP NHẬT: Thêm các biến cho tính năng "Ghi nhớ đăng nhập"
+    private CheckBox rememberMeCheckBox;
+    private SharedPreferences loginPreferences;
+    private static final String PREFS_NAME = "login_prefs";
+    private static final String KEY_USERNAME = "username";
+    private static final String KEY_PASSWORD = "password";
+    private static final String KEY_REMEMBER = "remember";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,16 +38,50 @@ public class LoginActivity extends AppCompatActivity {
         usernameEditText = findViewById(R.id.edit_text_username);
         passwordEditText = findViewById(R.id.edit_text_password);
         MaterialButton loginButton = findViewById(R.id.button_login);
+        rememberMeCheckBox = findViewById(R.id.checkbox_remember_me); // CẬP NHẬT
 
         // Khởi tạo ProgressDialog
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Đang đăng nhập...");
         progressDialog.setCancelable(false);
 
+        // CẬP NHẬT: Tải thông tin đăng nhập đã lưu (nếu có)
+        loginPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        loadCredentials();
+
         // Thiết lập sự kiện
         loginButton.setOnClickListener(v -> handleLogin());
         findViewById(R.id.text_register).setOnClickListener(v -> startActivity(new Intent(this, RegisterActivity.class)));
         findViewById(R.id.text_forgot_password).setOnClickListener(v -> startActivity(new Intent(this, ForgotPasswordActivity.class)));
+    }
+
+    /**
+     * Tải thông tin đăng nhập từ SharedPreferences và điền vào các ô tương ứng.
+     */
+    private void loadCredentials() {
+        boolean shouldRemember = loginPreferences.getBoolean(KEY_REMEMBER, false);
+        if (shouldRemember) {
+            usernameEditText.setText(loginPreferences.getString(KEY_USERNAME, ""));
+            passwordEditText.setText(loginPreferences.getString(KEY_PASSWORD, ""));
+            rememberMeCheckBox.setChecked(true);
+        }
+    }
+
+    /**
+     * Lưu hoặc xóa thông tin đăng nhập dựa vào trạng thái của CheckBox.
+     */
+    private void manageCredentials() {
+        SharedPreferences.Editor editor = loginPreferences.edit();
+        if (rememberMeCheckBox.isChecked()) {
+            // Lưu thông tin
+            editor.putString(KEY_USERNAME, usernameEditText.getText().toString().trim());
+            editor.putString(KEY_PASSWORD, passwordEditText.getText().toString().trim());
+            editor.putBoolean(KEY_REMEMBER, true);
+        } else {
+            // Xóa thông tin
+            editor.clear();
+        }
+        editor.apply(); // Áp dụng thay đổi
     }
 
     /**
@@ -54,6 +98,9 @@ public class LoginActivity extends AppCompatActivity {
 
         progressDialog.show();
 
+        // CẬP NHẬT: Quản lý việc lưu/xóa thông tin đăng nhập
+        manageCredentials();
+
         // Gọi phương thức đăng nhập từ FirebaseManager
         FirebaseManager.loginWithUsername(username, password, new FirebaseManager.AuthCallback() {
             @Override
@@ -61,14 +108,13 @@ public class LoginActivity extends AppCompatActivity {
                 progressDialog.dismiss();
                 Toast.makeText(LoginActivity.this, "Đăng nhập thành công! Role: " + user.getRole(), Toast.LENGTH_LONG).show();
 
-                // TODO: Dựa vào user.getRole() để chuyển đến màn hình tương ứng (User/Admin)
-//                 Ví dụ:
-                 if ("admin".equals(user.getRole())) {
+                // TODO: Chuyển đến màn hình chính
+                if ("admin".equals(user.getRole())) {
 //                     startActivity(new Intent(LoginActivity.this, AdminDashboardActivity.class));
-                 } else {
-                     startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-                 }
-                 finish();
+                } else {
+                    startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                }
+                finish();
             }
 
             @Override
