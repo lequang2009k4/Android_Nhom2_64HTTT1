@@ -13,6 +13,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import java.io.ByteArrayOutputStream;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
@@ -40,11 +43,11 @@ public class DetailActivity extends AppCompatActivity {
             Bitmap bitmap = bitmaps[0];
             int width = bitmap.getWidth();
             int height = bitmap.getHeight();
-            
+
             // Ước tính kích thước JPEG dựa trên số pixel và tỷ lệ nén thông thường
             // JPEG thường có tỷ lệ nén khoảng 1:10 đến 1:20 tùy thuộc vào độ phức tạp của ảnh
             long estimatedSize = (long) width * height * 3 / 15; // Ước tính với tỷ lệ nén 1:15
-            
+
             // Chuyển đổi sang KB hoặc MB
             if (estimatedSize >= 1024 * 1024) {
                 return String.format("%.1f MB", estimatedSize / (1024.0 * 1024.0));
@@ -77,11 +80,10 @@ public class DetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String imageUriStr = intent.getStringExtra("image_uri");
         // Lấy tên file và size
-        String fileName = "Unknown";
         String fileSize = "Unknown";
         String uploadDate = "Unknown";
 
-
+        String fileName = getIntent().getStringExtra("file_name");
         if (imageUriStr != null) {
             Uri imageUri = Uri.parse(imageUriStr);
             imageView.setImageURI(imageUri);
@@ -89,7 +91,7 @@ public class DetailActivity extends AppCompatActivity {
             if (cursor != null && cursor.moveToFirst()) {
                 int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
                 int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
-                if (nameIndex != -1) fileName = cursor.getString(nameIndex);
+//                if (nameIndex != -1) fileName = cursor.getString(nameIndex);
                 if (sizeIndex != -1) fileSize = cursor.getLong(sizeIndex) / 1024 + " KB";
                 // Lấy ngày upload
                 cursor.close();
@@ -99,7 +101,7 @@ public class DetailActivity extends AppCompatActivity {
         } else if (intent.hasExtra("image_bitmap")) {
             bitmap = intent.getParcelableExtra("image_bitmap");
             imageView.setImageBitmap(bitmap);
-            fileName = "Ảnh chụp";
+//            fileName = "Ảnh chụp";
             uploadDate = getIntent().getStringExtra("upload_date");
             if (uploadDate != null) {
                 tvUploadDate.setText(uploadDate);
@@ -112,11 +114,34 @@ public class DetailActivity extends AppCompatActivity {
         tvUploadDate.setText(uploadDate);
 
         btnCompress.setOnClickListener(v -> {
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storageRef = storage.getReference();
+            final String fileNameToUpload = "compressed/" + fileName;
+
             Intent intentNext = new Intent(DetailActivity.this, LoadingCompressActivity.class);
             if (imageUriStr != null) {
+                Uri imageUri = Uri.parse(imageUriStr);
+                StorageReference fileRef = storageRef.child(fileNameToUpload.split("\\.")[0] + "_compressed.jpg");
+                fileRef.putFile(imageUri)
+                        .addOnSuccessListener(taskSnapshot ->
+                                Toast.makeText(DetailActivity.this, "Upload successful!", Toast.LENGTH_SHORT).show())
+                        .addOnFailureListener(e ->
+                                Toast.makeText(DetailActivity.this, "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+
                 intentNext.putExtra("image_uri", imageUriStr);
+                intentNext.putExtra("file_name", fileNameToUpload.split("/")[1].split("\\.")[0] + "_compressed.jpg"); // Chỉ lấy tên file
             } else if (bitmap != null) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
+                byte[] data = baos.toByteArray();
+                StorageReference fileRef = storageRef.child(fileNameToUpload.split("\\.")[0] + "_compressed.jpg");
+                fileRef.putBytes(data)
+                        .addOnSuccessListener(taskSnapshot ->
+                                Toast.makeText(DetailActivity.this, "Upload successful!", Toast.LENGTH_SHORT).show())
+                        .addOnFailureListener(e ->
+                                Toast.makeText(DetailActivity.this, "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                 intentNext.putExtra("image_bitmap", bitmap);
+                intentNext.putExtra("file_name", fileNameToUpload.split("/")[1].split("\\.")[0] + "_compressed.jpg"); // Chỉ lấy tên file
             }
             intentNext.putExtra("image_bitmap", bitmap);
             startActivity(intentNext);

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,6 +18,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -51,20 +56,58 @@ public class UploadActivity extends AppCompatActivity {
         btnConfirm = findViewById(R.id.btn_confirm);
         btnConfirm.setEnabled(false); // Disable by default
 
+        // In UploadActivity.java, inside btnConfirm.setOnClickListener
         btnConfirm.setOnClickListener(v -> {
-            Intent intent = new Intent(UploadActivity.this, DetailActivity.class);
-            if (selectedImageUri != null) {
-                intent.putExtra("image_uri", selectedImageUri.toString());
-                // Lấy tên file, size, ngày upload nếu cần
-            }
-            if (photoBitmap != null) {
-                // Truyền bitmap qua intent (không khuyến khích với ảnh lớn)
-                intent.putExtra("image_bitmap", photoBitmap);
-
-            }
             String uploadDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
-            intent.putExtra("upload_date", uploadDate);
-            startActivity(intent);
+            String fileName = "uploaded/" + System.currentTimeMillis() + ".jpg";
+            if (selectedImageUri != null) {
+                StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+                StorageReference fileRef = storageRef.child(fileName);
+                fileRef.putFile(selectedImageUri)
+                        .addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                            // Get file name and size from content resolver
+//                            String displayName = "Unknown";
+                            String fileSize = "Unknown";
+                            try (Cursor cursor = getContentResolver().query(selectedImageUri, null, null, null, null)) {
+                                if (cursor != null && cursor.moveToFirst()) {
+                                    int nameIndex = cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME);
+                                    int sizeIndex = cursor.getColumnIndex(MediaStore.Images.Media.SIZE);
+//                                    if (nameIndex != -1) displayName = cursor.getString(nameIndex);
+                                    if (sizeIndex != -1)
+                                        fileSize = cursor.getLong(sizeIndex) / 1024 + " KB";
+                                }
+                            }
+                            Intent intent = new Intent(UploadActivity.this, DetailActivity.class);
+                            intent.putExtra("image_uri", selectedImageUri.toString());
+                            intent.putExtra("file_name", fileName.split("/")[1]); // Get just the file name
+                            intent.putExtra("file_size", fileSize);
+                            intent.putExtra("upload_date", uploadDate);
+                            startActivity(intent);
+                        }))
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(this, "Upload failed", Toast.LENGTH_SHORT).show();
+                        });
+            } else if (photoBitmap != null) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                photoBitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
+                byte[] data = baos.toByteArray();
+                StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+                StorageReference fileRef = storageRef.child(fileName);
+                fileRef.putBytes(data)
+                        .addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                            // Estimate file size
+                            String fileSize = (data.length / 1024) + " KB";
+                            Intent intent = new Intent(UploadActivity.this, DetailActivity.class);
+                            intent.putExtra("image_bitmap", photoBitmap);
+                            intent.putExtra("file_name", fileName.split("/")[1]); // Get just the file name
+                            intent.putExtra("file_size", fileSize);
+                            intent.putExtra("upload_date", uploadDate);
+                            startActivity(intent);
+                        }))
+                        .addOnFailureListener(e -> {
+                            Toast.makeText(this, "Upload failed", Toast.LENGTH_SHORT).show();
+                        });
+            }
         });
 
         Button btnUpload = findViewById(R.id.btn_upload);

@@ -49,7 +49,7 @@ public class LoadingCompressActivity extends AppCompatActivity {
         protected File doInBackground(Object... params) {
             try {
                 byte[] inputData;
-                
+
                 if (params[0] instanceof String) {
                     // Đọc dữ liệu gốc từ file thay vì decode thành Bitmap
                     Uri imageUri = Uri.parse((String) params[0]);
@@ -93,9 +93,10 @@ public class LoadingCompressActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(File file) {
             if (file != null && file.exists()) {
-                String newFileName = System.currentTimeMillis() + "_compressed";
+                Intent intent = getIntent();
+                String newFileName = intent.getStringExtra("file_name");
                 String uploadDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
-                
+
                 // Tính kích thước thực tế của file đã nén
                 long fileSizeBytes = file.length();
                 String fileSizeStr;
@@ -105,15 +106,15 @@ public class LoadingCompressActivity extends AppCompatActivity {
                     fileSizeStr = (fileSizeBytes / 1024) + " KB";
                 }
 
-                Intent intent = new Intent(LoadingCompressActivity.this, ResultCompressActivity.class);
-                intent.putExtra("file_path", file.getAbsolutePath());
-                intent.putExtra("file_name", newFileName);
-                intent.putExtra("file_size", fileSizeStr);
-                intent.putExtra("compression_date", uploadDate);
+                Intent intentNext = new Intent(LoadingCompressActivity.this, ResultCompressActivity.class);
+                intentNext.putExtra("file_path", file.getAbsolutePath());
+                intentNext.putExtra("file_name", newFileName);
+                intentNext.putExtra("file_size", fileSizeStr);
+                intentNext.putExtra("compression_date", uploadDate);
 
 //                new android.os.Handler().postDelayed(() -> {
-                    startActivity(intent);
-                    finish();
+                startActivity(intentNext);
+                finish();
 //                }, 1000);
             } else {
                 Toast.makeText(LoadingCompressActivity.this, "Error compressing image", Toast.LENGTH_SHORT).show();

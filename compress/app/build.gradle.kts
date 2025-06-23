@@ -62,4 +62,5 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.15.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("org.mindrot:jbcrypt:0.4")
+    implementation("com.google.firebase:firebase-storage")
 }
