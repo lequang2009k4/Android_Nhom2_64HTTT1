@@ -1,5 +1,6 @@
 package android.compress; // Đảm bảo package này khớp với namespace của bạn
 
+import android.compress.models.StorageManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -55,6 +56,9 @@ public class ResultCompressActivity extends AppCompatActivity {
 
         // Xử lý sự kiện khi nhấn nút "Hoàn tất"
         btnComplete.setOnClickListener(v -> {
+            // Làm mới cache để hiển thị ảnh mới khi về màn hình chính
+            StorageManager.refreshCache();
+            
             // Chuyển về màn hình chính hoặc một màn hình khác
 //             Ví dụ: finish(); // Đóng Activity hiện tại
 //             Hoặc: Intent homeIntent = new Intent(ResultCompressActivity.this, MainActivity.class);

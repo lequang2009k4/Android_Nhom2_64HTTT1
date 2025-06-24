@@ -3,11 +3,13 @@ package android.compress.utils;
 import android.app.Activity;
 import android.compress.SearchActivity;
 import android.content.Intent;
+import android.provider.SearchRecentSuggestions;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
+import androidx.appcompat.widget.SearchView;
+
+import android.compress.providers.SearchSuggestionProvider;
 
 /**
  * Helper class để thiết lập chức năng tìm kiếm chung cho tất cả các Activity
@@ -25,35 +27,30 @@ public class SearchHelper {
         
         View searchBarView = activity.findViewById(searchBarViewId);
         if (searchBarView != null) {
-            // Lấy TextInputEditText và TextInputLayout
-            TextInputEditText editTextSearch = searchBarView.findViewById(
-                    activity.getResources().getIdentifier("edit_text_search", "id", activity.getPackageName()));
-            TextInputLayout textInputLayoutSearch = searchBarView.findViewById(
-                    activity.getResources().getIdentifier("text_input_layout_search", "id", activity.getPackageName()));
+            // Lấy SearchView
+            SearchView searchView = searchBarView.findViewById(
+                    activity.getResources().getIdentifier("search_view", "id", activity.getPackageName()));
             
-            // Không tự động chuyển đến trang tìm kiếm khi nhấp vào EditText
-            // Thay vào đó, chỉ thiết lập sự kiện IME_ACTION_SEARCH (khi nhấn nút tìm kiếm trên bàn phím)
-            if (editTextSearch != null) {
-                editTextSearch.setOnEditorActionListener((v, actionId, event) -> {
-                    if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                        String query = editTextSearch.getText() != null 
-                                ? editTextSearch.getText().toString() : "";
+            if (searchView != null) {
+                // Thiết lập sự kiện khi người dùng submit query
+                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
                         if (!query.trim().isEmpty()) {
+                            // Lưu query vào lịch sử tìm kiếm
+                            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(activity,
+                                    SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
+                            suggestions.saveRecentQuery(query, null);
+                            
+                            // Mở trang tìm kiếm
                             openSearchActivity(activity, query);
                         }
                         return true;
                     }
-                    return false;
-                });
-            }
-            
-            // Xử lý sự kiện khi nhấn vào icon tìm kiếm
-            if (textInputLayoutSearch != null) {
-                textInputLayoutSearch.setEndIconOnClickListener(v -> {
-                    String query = editTextSearch != null && editTextSearch.getText() != null 
-                            ? editTextSearch.getText().toString() : "";
-                    if (!query.trim().isEmpty()) {
-                        openSearchActivity(activity, query);
+                    
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        return false;
                     }
                 });
             }

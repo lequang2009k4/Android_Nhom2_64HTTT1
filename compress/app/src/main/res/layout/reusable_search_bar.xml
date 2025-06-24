@@ -17,30 +17,28 @@
         app:strokeColor="@color/white"
         app:strokeWidth="1dp" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/text_input_layout_search"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginEnd="12dp"
         android:layout_toStartOf="@id/image_view_avatar"
-        app:boxCornerRadiusBottomEnd="24dp"
-        app:boxCornerRadiusBottomStart="24dp"
-        app:boxCornerRadiusTopEnd="24dp"
-        app:boxCornerRadiusTopStart="24dp"
-        app:endIconDrawable="@android:drawable/ic_menu_search"
-        app:endIconMode="custom">
+        app:cardCornerRadius="24dp"
+        app:cardElevation="0dp">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edit_text_search"
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/search_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Tìm kiếm file..."
-            android:inputType="text"
-            android:imeOptions="actionSearch"
-            android:maxLines="1" />
+            android:background="@android:color/transparent"
+            android:iconifiedByDefault="false"
+            android:queryHint="@string/search_hint"
+            app:queryBackground="@android:color/transparent"
+            app:iconifiedByDefault="false"
+            app:queryHint="@string/search_hint"
+            app:searchIcon="@android:drawable/ic_menu_search" />
 
-    </com.google.android.material.textfield.TextInputLayout>
+    </androidx.cardview.widget.CardView>
 
 </RelativeLayout> 
