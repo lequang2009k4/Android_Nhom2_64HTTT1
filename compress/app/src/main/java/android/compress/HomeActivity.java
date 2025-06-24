@@ -2,6 +2,7 @@
 package android.compress;
 
 import android.compress.R;
+import android.compress.models.StorageManager;
 import android.compress.utils.SearchHelper;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -67,76 +69,98 @@ public class HomeActivity extends AppCompatActivity {
             FileListActivity.start(HomeActivity.this, FileListActivity.TYPE_COMPRESSED);
         });
 
-        // Thiết lập dữ liệu giả lập
-        setupMockData();
-    }
-
-    // Thiết lập dữ liệu giả lập cho cả hai RecyclerView
-    private void setupMockData() {
-        // Dữ liệu giả lập cho file đã tải lên
-        List<FileItem> uploadedFiles = new ArrayList<>();
-        uploadedFiles.add(new FileItem("Design Guide", R.drawable.ic_image_placeholder));
-        uploadedFiles.add(new FileItem("Project Logo", R.drawable.ic_image_placeholder));
-        uploadedFiles.add(new FileItem("Meeting Notes", R.drawable.ic_image_placeholder));
-        uploadedFiles.add(new FileItem("Images", R.drawable.ic_image_placeholder));
-
-        // Dữ liệu giả lập cho file đã nén
-        List<FileItem> compressedFiles = new ArrayList<>();
-        compressedFiles.add(new FileItem("Archive_2024", R.drawable.ic_image_placeholder));
-        compressedFiles.add(new FileItem("Documents", R.drawable.ic_image_placeholder));
-        compressedFiles.add(new FileItem("Photos", R.drawable.ic_image_placeholder));
-
-        // Thiết lập adapter cho RecyclerView
-        FileAdapter uploadedAdapter = new FileAdapter(uploadedFiles);
-        FileAdapter compressedAdapter = new FileAdapter(compressedFiles);
-
-        // Thiết lập LayoutManager cho RecyclerView - Horizontal
+        // Thiết lập RecyclerView với LayoutManager - Horizontal
         recyclerViewUploaded.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         recyclerViewCompressed.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
-        // Gán adapter
-        recyclerViewUploaded.setAdapter(uploadedAdapter);
-        recyclerViewCompressed.setAdapter(compressedAdapter);
+        // Load dữ liệu thật
+        loadData();
     }
 
-    // Lớp chứa thông tin về file
-    private static class FileItem {
-        private String name;
-        private int thumbnailRes;
-
-        public FileItem(String name, int thumbnailRes) {
-            this.name = name;
-            this.thumbnailRes = thumbnailRes;
-        }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Tải lại dữ liệu mỗi khi activity được mở lại
+        loadData();
+    }
+    
+    @Override
+    protected void onDestroy() {
+        // Hủy tất cả tác vụ đang chạy khi Activity bị hủy
+        StorageManager.cancelAllTasks();
+        super.onDestroy();
     }
 
-    // Adapter cho RecyclerView
-    private class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder> {
-        private List<FileItem> fileItems;
+    // Load dữ liệu thật từ Firebase
+    private void loadData() {
+        // Load dữ liệu đã upload
+        StorageManager.getUploadedImages(new StorageManager.StorageCallback() {
+            @Override
+            public void onSuccess(List<StorageManager.ImageItem> imageItems) {
+                ImageAdapter uploadedAdapter = new ImageAdapter(imageItems);
+                recyclerViewUploaded.setAdapter(uploadedAdapter);
 
-        public FileAdapter(List<FileItem> fileItems) {
-            this.fileItems = fileItems;
+                if (imageItems.isEmpty()) {
+                    // Có thể hiển thị thông báo "Không có ảnh"
+                    Toast.makeText(HomeActivity.this, "Không có ảnh nào đã tải lên", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(HomeActivity.this, "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Load dữ liệu đã nén
+        StorageManager.getCompressedImages(new StorageManager.StorageCallback() {
+            @Override
+            public void onSuccess(List<StorageManager.ImageItem> imageItems) {
+                ImageAdapter compressedAdapter = new ImageAdapter(imageItems);
+                recyclerViewCompressed.setAdapter(compressedAdapter);
+
+                if (imageItems.isEmpty()) {
+                    // Có thể hiển thị thông báo "Không có ảnh"
+                    Toast.makeText(HomeActivity.this, "Không có ảnh nào đã nén", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Exception e) {
+                Toast.makeText(HomeActivity.this, "Lỗi tải dữ liệu: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // Adapter cho RecyclerView với dữ liệu thật
+    private class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHolder> {
+        private List<StorageManager.ImageItem> imageItems;
+
+        public ImageAdapter(List<StorageManager.ImageItem> imageItems) {
+            this.imageItems = imageItems;
         }
 
         @NonNull
         @Override
-        public FileViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public ImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_file, parent, false);
             
             // Điều chỉnh kích thước cho item hiển thị ngang
             ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-            layoutParams.width = dpToPx(140); // Kích thước cố định 140dp thay vì dùng mtrl_card_spacing
+            layoutParams.width = dpToPx(140); // Kích thước cố định 140dp
             layoutParams.height = dpToPx(140); // Kích thước cố định 140dp
             view.setLayoutParams(layoutParams);
             
-            return new FileViewHolder(view);
+            return new ImageViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull FileViewHolder holder, int position) {
-            FileItem fileItem = fileItems.get(position);
-            holder.textFileName.setText(fileItem.name);
-            holder.imageFileThumbnail.setImageResource(fileItem.thumbnailRes);
+        public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
+            StorageManager.ImageItem imageItem = imageItems.get(position);
+            holder.textFileName.setText(imageItem.getName());
+            
+            // Load thumbnail từ Storage
+            StorageManager.loadImageThumbnail(imageItem, holder.imageFileThumbnail);
 
             // Ẩn phần thông tin file vì không cần thiết trong hiển thị ngang
             if (holder.textFileInfo != null) {
@@ -146,22 +170,25 @@ public class HomeActivity extends AppCompatActivity {
             // Xử lý sự kiện khi nhấn vào item
             holder.itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(HomeActivity.this, DetailActivity.class);
-                intent.putExtra("file_name", fileItem.name);
+                intent.putExtra("file_name", imageItem.getName());
+                intent.putExtra("file_size", imageItem.getSize());
+                intent.putExtra("upload_date", imageItem.getDate());
+                intent.putExtra("image_uri", imageItem.getStorageRef().toString());
                 startActivity(intent);
             });
         }
 
         @Override
         public int getItemCount() {
-            return fileItems.size();
+            return imageItems.size();
         }
 
-        class FileViewHolder extends RecyclerView.ViewHolder {
+        class ImageViewHolder extends RecyclerView.ViewHolder {
             ImageView imageFileThumbnail;
             TextView textFileName;
             TextView textFileInfo;
 
-            public FileViewHolder(@NonNull View itemView) {
+            public ImageViewHolder(@NonNull View itemView) {
                 super(itemView);
                 imageFileThumbnail = itemView.findViewById(R.id.image_file_thumbnail);
                 textFileName = itemView.findViewById(R.id.text_file_name);

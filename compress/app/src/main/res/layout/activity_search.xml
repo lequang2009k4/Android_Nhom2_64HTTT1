@@ -46,7 +46,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="Tìm kiếm:"
+            android:text="@string/search_label"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -60,7 +60,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:backgroundTint="#FF9800"
-            android:text="Nén mới"
+            android:text="@string/new_compress_button"
             android:textColor="@android:color/white"
             app:cornerRadius="12dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -68,6 +68,24 @@
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+    
+    <!-- Filter Tabs -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout_filter"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@android:color/transparent"
+        app:tabMode="fixed"
+        app:tabGravity="fill"
+        app:tabIndicatorColor="#FF9800"
+        app:tabSelectedTextColor="#FF9800"
+        app:tabTextColor="#757575"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_header" />
 
     <!-- Search results label -->
     <TextView
@@ -75,13 +93,29 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:text="Kết quả tìm kiếm cho 'từ khóa'"
-        android:textSize="14sp"
+        android:text="@string/all_images"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search_header" />
+        app:layout_constraintTop_toBottomOf="@id/tab_layout_filter" />
+        
+    <!-- Search results summary - hidden by default -->
+    <TextView
+        android:id="@+id/text_search_summary"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/search_summary"
+        android:textSize="12sp"
+        android:textColor="#757575"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_search_results" />
 
     <!-- Search results RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
@@ -96,7 +130,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_search_results"
+        app:layout_constraintTop_toBottomOf="@id/text_search_summary"
         app:spanCount="2"
         tools:listitem="@layout/item_file" />
 
@@ -124,14 +158,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Không tìm thấy kết quả nào"
+            android:text="@string/no_results"
             android:textSize="16sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Hãy thử từ khóa khác"
+            android:text="@string/try_another_keyword"
             android:textSize="14sp" />
     </LinearLayout>
 
