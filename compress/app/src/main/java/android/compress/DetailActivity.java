@@ -22,6 +22,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import android.compress.models.StorageManager;
+
 public class DetailActivity extends AppCompatActivity {
 
     private TextView tvFileName;
@@ -146,5 +148,12 @@ public class DetailActivity extends AppCompatActivity {
             intentNext.putExtra("image_bitmap", bitmap);
             startActivity(intentNext);
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        // Hủy tất cả tác vụ đang chạy khi Activity bị hủy
+        StorageManager.cancelAllTasks();
+        super.onDestroy();
     }
 }

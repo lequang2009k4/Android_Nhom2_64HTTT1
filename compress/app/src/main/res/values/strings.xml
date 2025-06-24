@@ -47,5 +47,22 @@
     <string name="confirm_button_text">Xác nhận</string>
     <string name="passwords_do_not_match">Mật khẩu không khớp. Vui lòng thử lại.</string>
     <string name="password_updated_success">Cập nhật mật khẩu thành công!</string>
+    
+    <!-- Màn hình Tìm kiếm (Search Screen) -->
+    <string name="search_hint">Tìm kiếm ảnh...</string>
+    <string name="search_label">Tìm kiếm:</string>
+    <string name="new_compress_button">Nén mới</string>
+    <string name="tab_all">Tất cả</string>
+    <string name="tab_uploaded">Đã tải lên</string>
+    <string name="tab_compressed">Đã nén</string>
+    <string name="search_results">Kết quả tìm kiếm: %s</string>
+    <string name="all_images">Tất cả các ảnh</string>
+    <string name="search_summary">Tìm thấy: %1$d ở Tất cả, %2$d ở Đã tải lên, %3$d ở Đã nén</string>
+    <string name="no_results">Không tìm thấy kết quả nào</string>
+    <string name="try_another_keyword">Hãy thử từ khóa khác</string>
+    <string name="loading_data">Đang tải dữ liệu...</string>
+    <string name="clear_search_history">Xóa lịch sử tìm kiếm</string>
+    <string name="search_history_cleared">Đã xóa lịch sử tìm kiếm</string>
+    <string name="recent_searches">Tìm kiếm gần đây</string>
 
 </resources>

@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.compress.models.StorageManager;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -77,6 +78,9 @@ public class UploadActivity extends AppCompatActivity {
                                         fileSize = cursor.getLong(sizeIndex) / 1024 + " KB";
                                 }
                             }
+                            // Làm mới cache sau khi tải lên
+                            StorageManager.refreshCache();
+                            
                             Intent intent = new Intent(UploadActivity.this, DetailActivity.class);
                             intent.putExtra("image_uri", selectedImageUri.toString());
                             intent.putExtra("file_name", fileName.split("/")[1]); // Get just the file name
@@ -97,6 +101,10 @@ public class UploadActivity extends AppCompatActivity {
                         .addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
                             // Estimate file size
                             String fileSize = (data.length / 1024) + " KB";
+                            
+                            // Làm mới cache sau khi tải lên
+                            StorageManager.refreshCache();
+                            
                             Intent intent = new Intent(UploadActivity.this, DetailActivity.class);
                             intent.putExtra("image_bitmap", photoBitmap);
                             intent.putExtra("file_name", fileName.split("/")[1]); // Get just the file name
