@@ -6,4 +6,9 @@
     </style>
 
     <style name="Theme.Compress" parent="Base.Theme.Compress" />
+    
+    <!-- Custom style for SearchView hint text -->
+    <style name="SmallHintSearchView" parent="Widget.AppCompat.SearchView">
+        <item name="android:textSize">12sp</item>
+    </style>
 </resources>

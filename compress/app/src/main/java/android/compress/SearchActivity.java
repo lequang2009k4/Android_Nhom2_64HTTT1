@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.SearchRecentSuggestions;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -37,7 +39,6 @@ public class SearchActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewSearchResults;
     private TextView textSearchResults;
-    private TextView textSearchSummary;
     private LinearLayout layoutNoResults;
     private TabLayout tabLayoutFilter;
     private List<StorageManager.ImageItem> allImages;
@@ -49,6 +50,13 @@ public class SearchActivity extends AppCompatActivity {
     private int currentTabPosition = 0;
     private SearchView searchView;
     private SearchRecentSuggestions searchSuggestions;
+    
+    // Độ trễ debounce cho tìm kiếm (300ms)
+    private static final long SEARCH_DEBOUNCE_DELAY = 300;
+    // Handler cho việc debounce
+    private final Handler searchHandler = new Handler(Looper.getMainLooper());
+    // Runnable để thực hiện tìm kiếm
+    private Runnable searchRunnable;
     
     // Loại tab
     private static final int TAB_ALL = 0;
@@ -64,10 +72,11 @@ public class SearchActivity extends AppCompatActivity {
         searchSuggestions = new SearchRecentSuggestions(this,
                 SearchSuggestionProvider.AUTHORITY, SearchSuggestionProvider.MODE);
         
+        // Thiết lập UI elements
+        setupUI();
         initViews();
         setupRecyclerView();
         setupSearchView();
-        setupButtons();
         setupTabs();
 
         // Khởi tạo danh sách và adapter
@@ -85,9 +94,7 @@ public class SearchActivity extends AppCompatActivity {
         if (Intent.ACTION_SEARCH.equals(getIntent().getAction())) {
             searchQuery = getIntent().getStringExtra(SearchManager.QUERY);
             // Lưu query vào lịch sử tìm kiếm
-            if (searchQuery != null && !searchQuery.isEmpty()) {
-                searchSuggestions.saveRecentQuery(searchQuery, null);
-            }
+            saveQueryToHistory(searchQuery);
         }
         
         loadData(searchQuery);
@@ -102,17 +109,15 @@ public class SearchActivity extends AppCompatActivity {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             // Lưu query vào lịch sử
-            if (query != null && !query.isEmpty()) {
-                searchSuggestions.saveRecentQuery(query, null);
+            saveQueryToHistory(query);
                 
-                // Đặt query vào SearchView
-                if (searchView != null) {
-                    searchView.setQuery(query, false);
-                }
-                
-                // Thực hiện tìm kiếm
-                performSearch(query);
+            // Đặt query vào SearchView
+            if (searchView != null) {
+                searchView.setQuery(query, false);
             }
+                
+            // Thực hiện tìm kiếm
+            performSearch(query);
         }
     }
     
@@ -120,13 +125,18 @@ public class SearchActivity extends AppCompatActivity {
     protected void onDestroy() {
         // Hủy tất cả tác vụ đang chạy khi Activity bị hủy
         StorageManager.cancelAllTasks();
+        
+        // Hủy tác vụ tìm kiếm đang chờ (nếu có)
+        if (searchHandler != null && searchRunnable != null) {
+            searchHandler.removeCallbacks(searchRunnable);
+        }
+        
         super.onDestroy();
     }
 
     private void initViews() {
         recyclerViewSearchResults = findViewById(R.id.recycler_view_search_results);
         textSearchResults = findViewById(R.id.text_search_results);
-        textSearchSummary = findViewById(R.id.text_search_summary);
         layoutNoResults = findViewById(R.id.layout_no_results);
         tabLayoutFilter = findViewById(R.id.tab_layout_filter);
         
@@ -188,9 +198,9 @@ public class SearchActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 // Lưu query vào lịch sử tìm kiếm
-                if (query != null && !query.isEmpty()) {
-                    searchSuggestions.saveRecentQuery(query, null);
-                }
+                saveQueryToHistory(query);
+                // Hủy tìm kiếm đang chờ (nếu có)
+                searchHandler.removeCallbacks(searchRunnable);
                 performSearch(query);
                 searchView.clearFocus();
                 return true;
@@ -198,7 +208,16 @@ public class SearchActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                performSearch(newText);
+                // Hủy tìm kiếm đang chờ (nếu có)
+                if (searchRunnable != null) {
+                    searchHandler.removeCallbacks(searchRunnable);
+                }
+                
+                // Tạo một tác vụ tìm kiếm mới và đặt delay
+                searchRunnable = () -> performSearch(newText);
+                
+                // Thực hiện tìm kiếm sau khoảng thời gian SEARCH_DEBOUNCE_DELAY
+                searchHandler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY);
                 return true;
             }
         });
@@ -225,7 +244,22 @@ public class SearchActivity extends AppCompatActivity {
         });
     }
     
-    private void setupButtons() {
+    private void setupUI() {
+        // Xử lý sự kiện quay về trang Home khi nhấn logo
+        findViewById(R.id.logo_home).setOnClickListener(view -> {
+            // Xóa text tìm kiếm trước khi quay về Home
+            if (searchView != null) {
+                searchView.setQuery("", false);
+                searchView.clearFocus();
+            }
+            
+            Intent intent = new Intent(SearchActivity.this, HomeActivity.class);
+            // Đảm bảo tạo một instance mới của HomeActivity và xóa stack
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        });
+        
         // Xử lý sự kiện nút nén mới
         Button buttonNewCompress = findViewById(R.id.button_new_compress);
         buttonNewCompress.setOnClickListener(v -> {
@@ -305,6 +339,7 @@ public class SearchActivity extends AppCompatActivity {
     // Kiểm tra xem tất cả các tác vụ đã hoàn thành chưa
     private void checkAllTasksCompleted(int completed, int total, String searchQuery) {
         if (completed >= total) {
+            showLoading(false);
             runOnUiThread(() -> performSearch(searchQuery));
         }
     }
@@ -327,6 +362,12 @@ public class SearchActivity extends AppCompatActivity {
             if (loadingTextView != null) {
                 loadingTextView.setText(getString(R.string.loading_data));
             }
+        } else {
+            // Ẩn trạng thái loading nhưng không hiện kết quả tìm kiếm ngay
+            // (sẽ được hiển thị bởi updateResultsVisibility dựa vào kết quả tìm kiếm)
+            if (loadingTextView != null) {
+                loadingTextView.setText(getString(R.string.no_results));
+            }
         }
     }
     
@@ -342,13 +383,11 @@ public class SearchActivity extends AppCompatActivity {
         // Cập nhật tiêu đề tìm kiếm
         if (normalizedQuery.isEmpty()) {
             textSearchResults.setText(getString(R.string.all_images));
-            textSearchSummary.setVisibility(View.GONE);
         } else {
             // Hiển thị kết quả tìm kiếm với số lượng tìm được
             String result = String.format("Kết quả tìm kiếm: %s (%d)", 
                     query, filteredAll.size());
             textSearchResults.setText(result);
-            textSearchSummary.setVisibility(View.GONE);
         }
         
         // Lọc theo tab hiện tại
@@ -381,36 +420,30 @@ public class SearchActivity extends AppCompatActivity {
                                     List<StorageManager.ImageItem> filteredUploaded,
                                     List<StorageManager.ImageItem> filteredCompressed) {
         List<StorageManager.ImageItem> resultsToShow;
+        int resultCount;
         
+        // Chọn danh sách kết quả dựa vào tab hiện tại
         switch (currentTabPosition) {
             case TAB_UPLOADED:
                 resultsToShow = filteredUploaded;
-                // Cập nhật số lượng theo tab đang chọn
-                if (!searchView.getQuery().toString().trim().isEmpty()) {
-                    String result = String.format("Kết quả tìm kiếm: %s (%d)", 
-                            searchView.getQuery().toString(), filteredUploaded.size());
-                    textSearchResults.setText(result);
-                }
+                resultCount = filteredUploaded.size();
                 break;
             case TAB_COMPRESSED:
                 resultsToShow = filteredCompressed;
-                // Cập nhật số lượng theo tab đang chọn
-                if (!searchView.getQuery().toString().trim().isEmpty()) {
-                    String result = String.format("Kết quả tìm kiếm: %s (%d)", 
-                            searchView.getQuery().toString(), filteredCompressed.size());
-                    textSearchResults.setText(result);
-                }
+                resultCount = filteredCompressed.size();
                 break;
             case TAB_ALL:
             default:
                 resultsToShow = filteredAll;
-                // Cập nhật số lượng theo tab đang chọn
-                if (!searchView.getQuery().toString().trim().isEmpty()) {
-                    String result = String.format("Kết quả tìm kiếm: %s (%d)", 
-                            searchView.getQuery().toString(), filteredAll.size());
-                    textSearchResults.setText(result);
-                }
+                resultCount = filteredAll.size();
                 break;
+        }
+        
+        // Cập nhật tiêu đề tìm kiếm nếu có từ khóa tìm kiếm
+        String query = searchView.getQuery().toString().trim();
+        if (!query.isEmpty()) {
+            String result = String.format("Kết quả tìm kiếm: %s (%d)", query, resultCount);
+            textSearchResults.setText(result);
         }
         
         // Cập nhật adapter
@@ -506,11 +539,13 @@ public class SearchActivity extends AppCompatActivity {
     
     // Mở màn hình chi tiết ảnh
     private void openImageDetail(StorageManager.ImageItem imageItem) {
-        Intent intent = new Intent(this, DetailActivity.class);
-        intent.putExtra("file_name", imageItem.getName());
-        intent.putExtra("file_size", imageItem.getSize());
-        intent.putExtra("upload_date", imageItem.getDate());
-        intent.putExtra("image_uri", imageItem.getStorageRef().toString());
-        startActivity(intent);
+        StorageManager.openDetailActivity(this, imageItem);
+    }
+
+    // Lưu query vào lịch sử tìm kiếm
+    private void saveQueryToHistory(String query) {
+        if (query != null && !query.isEmpty()) {
+            searchSuggestions.saveRecentQuery(query, null);
+        }
     }
 }

@@ -34,11 +34,14 @@
             android:background="@android:color/transparent"
             android:iconifiedByDefault="false"
             android:queryHint="@string/search_hint"
+            android:theme="@style/SmallHintSearchView"
+            android:saveEnabled="false"
             app:queryBackground="@android:color/transparent"
             app:iconifiedByDefault="false"
             app:queryHint="@string/search_hint"
+            app:defaultQueryHint="@string/search_hint"
             app:searchIcon="@android:drawable/ic_menu_search" />
 
     </androidx.cardview.widget.CardView>
 
-</RelativeLayout> 
+</RelativeLayout>

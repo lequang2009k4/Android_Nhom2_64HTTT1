@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.graphics.Insets;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -82,6 +83,16 @@ public class HomeActivity extends AppCompatActivity {
         super.onResume();
         // Tải lại dữ liệu mỗi khi activity được mở lại
         loadData();
+        
+        // Reset SearchView mỗi khi quay về Home
+        View searchBarView = findViewById(R.id.home_search_bar);
+        if (searchBarView != null) {
+            SearchView searchView = searchBarView.findViewById(R.id.search_view);
+            if (searchView != null) {
+                searchView.setQuery("", false);
+                searchView.clearFocus();
+            }
+        }
     }
     
     @Override
@@ -89,6 +100,22 @@ public class HomeActivity extends AppCompatActivity {
         // Hủy tất cả tác vụ đang chạy khi Activity bị hủy
         StorageManager.cancelAllTasks();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        
+        // Tìm và reset SearchView
+        View searchBarView = findViewById(R.id.home_search_bar);
+        if (searchBarView != null) {
+            androidx.appcompat.widget.SearchView searchView = searchBarView.findViewById(R.id.search_view);
+            if (searchView != null) {
+                searchView.setQuery("", false);
+                searchView.clearFocus();
+            }
+        }
     }
 
     // Load dữ liệu thật từ Firebase
@@ -169,12 +196,7 @@ public class HomeActivity extends AppCompatActivity {
 
             // Xử lý sự kiện khi nhấn vào item
             holder.itemView.setOnClickListener(v -> {
-                Intent intent = new Intent(HomeActivity.this, DetailActivity.class);
-                intent.putExtra("file_name", imageItem.getName());
-                intent.putExtra("file_size", imageItem.getSize());
-                intent.putExtra("upload_date", imageItem.getDate());
-                intent.putExtra("image_uri", imageItem.getStorageRef().toString());
-                startActivity(intent);
+                StorageManager.openDetailActivity(HomeActivity.this, imageItem);
             });
         }
 
