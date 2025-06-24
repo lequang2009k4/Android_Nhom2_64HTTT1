@@ -52,9 +52,9 @@ public class DetailActivity extends AppCompatActivity {
 
             // Chuyển đổi sang KB hoặc MB
             if (estimatedSize >= 1024 * 1024) {
-                return String.format("%.1f MB", estimatedSize / (1024.0 * 1024.0));
+                return String.format(Locale.getDefault(), "%.2f MB", estimatedSize / (1024.0 * 1024.0));
             } else {
-                return (estimatedSize / 1024) + " KB";
+                return String.format(Locale.getDefault(), "%.2f KB", estimatedSize / 1024.0);
             }
         }
 
@@ -94,7 +94,15 @@ public class DetailActivity extends AppCompatActivity {
                 int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
                 int sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE);
 //                if (nameIndex != -1) fileName = cursor.getString(nameIndex);
-                if (sizeIndex != -1) fileSize = cursor.getLong(sizeIndex) / 1024 + " KB";
+                if (sizeIndex != -1) {
+                    fileSize = cursor.getLong(sizeIndex) / 1024 + " KB";
+                    long sizeBytes = cursor.getLong(sizeIndex);
+                    if (sizeBytes >= 1024 * 1024) {
+                        fileSize = String.format(Locale.getDefault(), "%.2f MB", sizeBytes / (1024.0 * 1024.0));
+                    } else {
+                        fileSize = String.format(Locale.getDefault(), "%.2f KB", sizeBytes / 1024.0);
+                    }
+                }
                 // Lấy ngày upload
                 cursor.close();
             }
@@ -122,26 +130,26 @@ public class DetailActivity extends AppCompatActivity {
 
             Intent intentNext = new Intent(DetailActivity.this, LoadingCompressActivity.class);
             if (imageUriStr != null) {
-                Uri imageUri = Uri.parse(imageUriStr);
-                StorageReference fileRef = storageRef.child(fileNameToUpload.split("\\.")[0] + "_compressed.jpg");
-                fileRef.putFile(imageUri)
-                        .addOnSuccessListener(taskSnapshot ->
-                                Toast.makeText(DetailActivity.this, "Upload successful!", Toast.LENGTH_SHORT).show())
-                        .addOnFailureListener(e ->
-                                Toast.makeText(DetailActivity.this, "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+//                Uri imageUri = Uri.parse(imageUriStr);
+//                StorageReference fileRef = storageRef.child(fileNameToUpload.split("\\.")[0] + "_compressed.jpg");
+//                fileRef.putFile(imageUri)
+//                        .addOnSuccessListener(taskSnapshot ->
+//                                Toast.makeText(DetailActivity.this, "Upload successful!", Toast.LENGTH_SHORT).show())
+//                        .addOnFailureListener(e ->
+//                                Toast.makeText(DetailActivity.this, "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
 
                 intentNext.putExtra("image_uri", imageUriStr);
                 intentNext.putExtra("file_name", fileNameToUpload.split("/")[1].split("\\.")[0] + "_compressed.jpg"); // Chỉ lấy tên file
             } else if (bitmap != null) {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
-                byte[] data = baos.toByteArray();
-                StorageReference fileRef = storageRef.child(fileNameToUpload.split("\\.")[0] + "_compressed.jpg");
-                fileRef.putBytes(data)
-                        .addOnSuccessListener(taskSnapshot ->
-                                Toast.makeText(DetailActivity.this, "Upload successful!", Toast.LENGTH_SHORT).show())
-                        .addOnFailureListener(e ->
-                                Toast.makeText(DetailActivity.this, "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+//                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
+//                byte[] data = baos.toByteArray();
+//                StorageReference fileRef = storageRef.child(fileNameToUpload.split("\\.")[0] + "_compressed.jpg");
+//                fileRef.putBytes(data)
+//                        .addOnSuccessListener(taskSnapshot ->
+//                                Toast.makeText(DetailActivity.this, "Upload successful!", Toast.LENGTH_SHORT).show())
+//                        .addOnFailureListener(e ->
+//                                Toast.makeText(DetailActivity.this, "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                 intentNext.putExtra("image_bitmap", bitmap);
                 intentNext.putExtra("file_name", fileNameToUpload.split("/")[1].split("\\.")[0] + "_compressed.jpg"); // Chỉ lấy tên file
             }
