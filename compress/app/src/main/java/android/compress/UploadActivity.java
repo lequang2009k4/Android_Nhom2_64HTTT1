@@ -105,11 +105,15 @@ public class UploadActivity extends AppCompatActivity {
                             String fileSize = "Unknown";
                             try (Cursor cursor = getContentResolver().query(selectedImageUri, null, null, null, null)) {
                                 if (cursor != null && cursor.moveToFirst()) {
-                                    int nameIndex = cursor.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME);
                                     int sizeIndex = cursor.getColumnIndex(MediaStore.Images.Media.SIZE);
-//                                    if (nameIndex != -1) displayName = cursor.getString(nameIndex);
-                                    if (sizeIndex != -1)
-                                        fileSize = cursor.getLong(sizeIndex) / 1024 + " KB";
+                                    if (sizeIndex != -1) {
+                                        long sizeBytes = cursor.getLong(sizeIndex);
+                                        if (sizeBytes >= 1024 * 1024) {
+                                            fileSize = String.format(Locale.getDefault(), "%.2f MB", sizeBytes / (1024.0 * 1024.0));
+                                        } else {
+                                            fileSize = String.format(Locale.getDefault(), "%.2f KB", sizeBytes / 1024.0);
+                                        }
+                                    }
                                 }
                             }
                             // Làm mới cache sau khi tải lên
@@ -134,7 +138,12 @@ public class UploadActivity extends AppCompatActivity {
                 fileRef.putBytes(data)
                         .addOnSuccessListener(taskSnapshot -> fileRef.getDownloadUrl().addOnSuccessListener(uri -> {
                             // Estimate file size
-                            String fileSize = (data.length / 1024) + " KB";
+                            String fileSize;
+                            if (data.length >= 1024 * 1024) {
+                                fileSize = String.format(Locale.getDefault(), "%.2f MB", data.length / (1024.0 * 1024.0));
+                            } else {
+                                fileSize = String.format(Locale.getDefault(), "%.2f KB", data.length / 1024.0);
+                            }
 
                             // Làm mới cache sau khi tải lên
                             StorageManager.refreshCache();

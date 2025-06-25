@@ -1,7 +1,7 @@
 [
 {
-  "directory": "D:/Android_Nhom2_64HTTT1/compress/app/.cxx/Debug/5i3r3619/arm64-v8a",
-  "command": "C:\\Users\\Admin\\AppData\\Local\\Android\\Sdk\\ndk\\27.0.12077973\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe --target=aarch64-none-linux-android30 --sysroot=C:/Users/Admin/AppData/Local/Android/Sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dimagecompressor_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles\\imagecompressor.dir\\imagecompressor.cpp.o -c D:\\Android_Nhom2_64HTTT1\\compress\\app\\src\\main\\cpp\\imagecompressor.cpp",
-  "file": "D:\\Android_Nhom2_64HTTT1\\compress\\app\\src\\main\\cpp\\imagecompressor.cpp"
+  "directory": "/Users/akai/AndroidStudioProjects/Android_Nhom2_64HTTT1/compress/app/.cxx/Debug/5i3r3619/arm64-v8a",
+  "command": "/Users/akai/Library/Android/sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=aarch64-none-linux-android30 --sysroot=/Users/akai/Library/Android/sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -Dimagecompressor_EXPORTS -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC -o CMakeFiles/imagecompressor.dir/imagecompressor.cpp.o -c /Users/akai/AndroidStudioProjects/Android_Nhom2_64HTTT1/compress/app/src/main/cpp/imagecompressor.cpp",
+  "file": "/Users/akai/AndroidStudioProjects/Android_Nhom2_64HTTT1/compress/app/src/main/cpp/imagecompressor.cpp"
 }
 ]
