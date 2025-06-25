@@ -1,3 +1,3 @@
-D:/Android_Nhom2_64HTTT1/compress/app/.cxx/Debug/5i3r3619/x86/CMakeFiles/imagecompressor.dir
-D:/Android_Nhom2_64HTTT1/compress/app/.cxx/Debug/5i3r3619/x86/CMakeFiles/edit_cache.dir
-D:/Android_Nhom2_64HTTT1/compress/app/.cxx/Debug/5i3r3619/x86/CMakeFiles/rebuild_cache.dir
+/Users/akai/AndroidStudioProjects/Android_Nhom2_64HTTT1/compress/app/.cxx/Debug/5i3r3619/x86/CMakeFiles/imagecompressor.dir
+/Users/akai/AndroidStudioProjects/Android_Nhom2_64HTTT1/compress/app/.cxx/Debug/5i3r3619/x86/CMakeFiles/edit_cache.dir
+/Users/akai/AndroidStudioProjects/Android_Nhom2_64HTTT1/compress/app/.cxx/Debug/5i3r3619/x86/CMakeFiles/rebuild_cache.dir

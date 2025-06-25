@@ -161,7 +161,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="32dp"
-        android:backgroundTint="#F8B366"
+        android:backgroundTint="#F57C00"
         android:paddingTop="12dp"
         android:paddingBottom="12dp"
         android:text="Nén ngay"

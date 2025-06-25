@@ -1,1 +1,1 @@
-D:\Android_Nhom2_64HTTT1\compress\app\build\intermediates\cxx\Debug\5i3r3619\obj\x86
+/Users/akai/AndroidStudioProjects/Android_Nhom2_64HTTT1/compress/app/build/intermediates/cxx/Debug/5i3r3619/obj/x86

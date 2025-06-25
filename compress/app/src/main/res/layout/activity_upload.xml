@@ -28,7 +28,7 @@
         android:layout_marginTop="48dp"
         app:cardCornerRadius="0dp"
         app:cardElevation="0dp"
-        app:cardBackgroundColor="#F8B366"
+        app:cardBackgroundColor="#F57C00"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_upload_file_title">
@@ -80,7 +80,7 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:text="Tải lên"
-            android:textColor="#F8B366"
+            android:textColor="#F57C00"
             android:textStyle="bold"
             style="?android:attr/buttonBarButtonStyle"/>
 
@@ -96,7 +96,7 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:text="Chụp ảnh"
-            android:textColor="#F8B366"
+            android:textColor="#F57C00"
             android:textStyle="bold"
             style="?android:attr/buttonBarButtonStyle"/>
     </LinearLayout>
@@ -132,7 +132,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="32dp"
-        android:backgroundTint="#F8B366"
+        android:backgroundTint="#F57C00"
         android:text="Xác nhận"
         android:enabled="false"
         android:textColor="@android:color/white"
