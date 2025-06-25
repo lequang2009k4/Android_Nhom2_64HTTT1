@@ -35,16 +35,6 @@
             app:layout_constraintTop_toTopOf="@id/image_view_avatar"
             tools:text="Chu Quang Huy" />
 
-        <TextView
-            android:id="@+id/text_view_file_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#757575"
-            android:textSize="12sp"
-            app:layout_constraintStart_toStartOf="@id/text_view_fullname"
-            app:layout_constraintTop_toBottomOf="@id/text_view_fullname"
-            tools:text="35 tệp" />
-
         <ImageButton
             android:id="@+id/button_delete"
             android:layout_width="48dp"
