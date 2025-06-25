@@ -36,6 +36,9 @@ public class FileListActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_file_list);
         
+        // Khởi tạo StorageManager
+        StorageManager.init(getApplicationContext());
+        
         // Khởi tạo các view
         fileCategoryTitle = findViewById(R.id.file_category_title);
         fileSubtitle = findViewById(R.id.file_subtitle);

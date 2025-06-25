@@ -34,6 +34,9 @@ public class LoadingCompressActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_compress);
+        
+        // Khởi tạo StorageManager
+        android.compress.models.StorageManager.init(getApplicationContext());
 
         String imageUriStr = getIntent().getStringExtra("image_uri");
         Bitmap bitmap = getIntent().getParcelableExtra("image_bitmap");
@@ -103,7 +106,17 @@ public class LoadingCompressActivity extends AppCompatActivity {
                 // Upload to Firebase Storage
                 com.google.firebase.storage.FirebaseStorage storage = com.google.firebase.storage.FirebaseStorage.getInstance();
                 com.google.firebase.storage.StorageReference storageRef = storage.getReference();
-                com.google.firebase.storage.StorageReference fileRef = storageRef.child("compressed/" + newFileName);
+                // com.google.firebase.storage.StorageReference fileRef = storageRef.child("compressed/" + newFileName);
+                // com.google.firebase.storage.StorageReference fileRef = storageRef.child(android.compress.models.StorageManager.getCurrentUserCompressPath() + newFileName);
+                String compressPath = android.compress.models.StorageManager.getCurrentUserCompressPath();
+                
+                if (compressPath == null) {
+                    Toast.makeText(LoadingCompressActivity.this, "Vui lòng đăng nhập trước khi nén ảnh", Toast.LENGTH_SHORT).show();
+                    finish();
+                    return;
+                }
+                
+                com.google.firebase.storage.StorageReference fileRef = storageRef.child(compressPath + newFileName);
 
                 fileRef.putFile(android.net.Uri.fromFile(file)).addOnSuccessListener(taskSnapshot -> {
                     // On upload success, go to ResultCompressActivity

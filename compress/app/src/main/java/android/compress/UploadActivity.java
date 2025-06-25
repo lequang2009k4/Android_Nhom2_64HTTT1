@@ -79,6 +79,9 @@ public class UploadActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
+        
+        // Khởi tạo StorageManager
+        StorageManager.init(getApplicationContext());
 
         imagePlaceholder = findViewById(R.id.image_placeholder);
         btnConfirm = findViewById(R.id.btn_confirm);
@@ -88,7 +91,16 @@ public class UploadActivity extends AppCompatActivity {
         btnConfirm.setOnClickListener(v -> {
             String ext = getFileExtension(selectedImageUri);
             String uploadDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
-            String fileName = "uploaded/" + System.currentTimeMillis() + "." + ext;
+            // String fileName = "uploaded/" + System.currentTimeMillis() + "." + ext;
+            //  String fileName = StorageManager.getCurrentUserUploadPath() + System.currentTimeMillis() + "." + ext;
+            String uploadPath = StorageManager.getCurrentUserUploadPath();
+            
+            if (uploadPath == null) {
+                Toast.makeText(this, "Vui lòng đăng nhập trước khi tải lên ảnh", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            String fileName = uploadPath + System.currentTimeMillis() + "." + ext;
 
             if (!isImageFileAllowed(fileName)) {
                 Toast.makeText(this, "Only JPG are allowed", Toast.LENGTH_SHORT).show();

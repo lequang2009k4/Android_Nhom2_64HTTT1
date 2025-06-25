@@ -2,6 +2,8 @@ package android.compress;
 
 import android.app.ProgressDialog;
 import android.compress.models.FirebaseManager;
+import android.compress.models.StorageManager;
+import android.compress.models.UserManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -33,6 +35,9 @@ public class LoginActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
+
+        // Khởi tạo StorageManager
+        StorageManager.init(getApplicationContext());
 
         // Ánh xạ View
         usernameEditText = findViewById(R.id.edit_text_username);
@@ -103,6 +108,15 @@ public class LoginActivity extends AppCompatActivity {
         FirebaseManager.loginWithUsername(username, password, new FirebaseManager.AuthCallback() {
             @Override
             public void onSuccess(FirebaseManager.User user) {
+                // Hiển thị userId để debug
+                Toast.makeText(LoginActivity.this, "UserID đã lấy được: " + user.getUserId(), Toast.LENGTH_LONG).show();
+                
+                // Lưu thông tin người dùng
+                UserManager.saveUserInfo(LoginActivity.this, user.getUserId(), user.getUsername());
+                
+                // Làm mới cache để tải dữ liệu mới cho người dùng
+                StorageManager.clearCache();
+                
                 progressDialog.dismiss();
                 Toast.makeText(LoginActivity.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
 
@@ -110,8 +124,7 @@ public class LoginActivity extends AppCompatActivity {
                 if ("admin".equals(user.getRole())) {
                     startActivity(new Intent(LoginActivity.this, AdminDashboardActivity.class));
                 } else {
-                    // TODO: Chuyển đến màn hình chính cho user thường
-                     startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                    startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                     Toast.makeText(LoginActivity.this, "Chào mừng user " + user.getUsername(), Toast.LENGTH_SHORT).show();
                 }
                 finish(); // Đóng màn hình đăng nhập
