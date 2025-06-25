@@ -31,6 +31,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class StorageManager {
 
     private static final FirebaseStorage storage = FirebaseStorage.getInstance();
+    
+    // Cấu trúc thư mục mới dựa trên userId
+    private static final String USER_PATH_FORMAT = "users/%s/";
+    private static final String UPLOADED_PATH_FORMAT = USER_PATH_FORMAT + "uploaded/";
+    private static final String COMPRESSED_PATH_FORMAT = USER_PATH_FORMAT + "compressed/";
+    
+    // Giữ lại cho khả năng tương thích ngược
     private static final String UPLOADED_PATH = "uploaded/";
     private static final String COMPRESSED_PATH = "compressed/";
     
@@ -50,6 +57,9 @@ public class StorageManager {
     
     // Quản lý task đang chạy
     private static final TaskManager taskManager = new TaskManager();
+    
+    // Context của ứng dụng - cần thiết để truy cập SharedPreferences
+    private static Context appContext;
 
     public interface StorageCallback {
         void onSuccess(List<ImageItem> imageItems);
@@ -59,6 +69,47 @@ public class StorageManager {
     public interface CompressionCallback {
         void onSuccess(Bitmap compressedBitmap, int sizeReduction);
         void onFailure(Exception e);
+    }
+    
+    /**
+     * Khởi tạo StorageManager với context của ứng dụng
+     */
+    public static void init(Context context) {
+        appContext = context.getApplicationContext();
+    }
+    
+    /**
+     * Lấy context của ứng dụng
+     */
+    private static Context getAppContext() {
+        if (appContext == null) {
+            throw new IllegalStateException("StorageManager must be initialized with init(Context) before use");
+        }
+        return appContext;
+    }
+    
+    /**
+     * Lấy đường dẫn tải lên cho người dùng hiện tại
+     */
+    public static String getCurrentUserUploadPath() {
+        String userId = UserManager.getCurrentUserId(getAppContext());
+        if (userId != null) {
+            return String.format(UPLOADED_PATH_FORMAT, userId);
+        }
+        // Trả về null nếu không có userId
+        return null;
+    }
+    
+    /**
+     * Lấy đường dẫn nén cho người dùng hiện tại
+     */
+    public static String getCurrentUserCompressPath() {
+        String userId = UserManager.getCurrentUserId(getAppContext());
+        if (userId != null) {
+            return String.format(COMPRESSED_PATH_FORMAT, userId);
+        }
+        // Trả về null nếu không có userId
+        return null;
     }
     
     /**
@@ -126,7 +177,14 @@ public class StorageManager {
             return;
         }
         
-        StorageReference uploadedRef = storage.getReference().child(UPLOADED_PATH);
+        String path = getCurrentUserUploadPath();
+        if (path == null) {
+            // Nếu không có userId, trả về danh sách trống
+            runOnUiThread(() -> callback.onSuccess(new ArrayList<>()));
+            return;
+        }
+        
+        StorageReference uploadedRef = storage.getReference().child(path);
         getImagesFromPath(uploadedRef, new StorageCallback() {
             @Override
             public void onSuccess(List<ImageItem> imageItems) {
@@ -153,7 +211,14 @@ public class StorageManager {
             return;
         }
         
-        StorageReference compressedRef = storage.getReference().child(COMPRESSED_PATH);
+        String path = getCurrentUserCompressPath();
+        if (path == null) {
+            // Nếu không có userId, trả về danh sách trống
+            runOnUiThread(() -> callback.onSuccess(new ArrayList<>()));
+            return;
+        }
+        
+        StorageReference compressedRef = storage.getReference().child(path);
         getImagesFromPath(compressedRef, new StorageCallback() {
             @Override
             public void onSuccess(List<ImageItem> imageItems) {

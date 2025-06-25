@@ -4,6 +4,7 @@ package android.compress;
 import android.compress.R;
 import android.compress.models.StorageManager;
 import android.compress.utils.SearchHelper;
+import android.compress.models.UserManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -38,6 +39,10 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
+        
+        // Khởi tạo StorageManager
+        StorageManager.init(getApplicationContext());
+        
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -68,6 +73,22 @@ public class HomeActivity extends AppCompatActivity {
         ImageButton viewAllCompressed = findViewById(R.id.button_view_all_compressed);
         viewAllCompressed.setOnClickListener(v -> {
             FileListActivity.start(HomeActivity.this, FileListActivity.TYPE_COMPRESSED);
+        });
+
+        // Nút đăng xuất
+        Button logoutButton = findViewById(R.id.button_logout);
+        logoutButton.setOnClickListener(v -> {
+            // Xóa thông tin người dùng
+            UserManager.clearUserInfo(getApplicationContext());
+            
+            // Xóa cache
+            StorageManager.clearCache();
+            
+            // Chuyển về màn hình đăng nhập
+            Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish(); // Kết thúc màn hình hiện tại
         });
 
         // Thiết lập RecyclerView với LayoutManager - Horizontal

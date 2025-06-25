@@ -32,7 +32,6 @@ public class ResultCompressActivity extends AppCompatActivity {
         tvNewUploadDate = findViewById(R.id.tv_new_upload_date);
         tvNewFileSize = findViewById(R.id.tv_new_file_size);
         btnComplete = findViewById(R.id.btn_complete);
-
         ImageView imageViewCompressed = findViewById(R.id.imageViewCompressed);
 
         String originalSize = getIntent().getStringExtra("original_size");
@@ -43,8 +42,7 @@ public class ResultCompressActivity extends AppCompatActivity {
         double compressed = Double.parseDouble(compressedSize.split(" ")[0]);
         double reductionPercent = ((original - compressed) * 100.0) / original;
         String reductionText = String.format("%.2f%%", reductionPercent);
-        tvReductionInfo.setText("Tối ưu đáng kể so với kích thước gốc");
-        tvPsnrValue.setText(reductionText);
+        tvReductionInfo.setText("Giảm " + reductionText + " so với kích thước gốc");
 //        } else {
 //            tvReductionInfo.setText("Giảm " + 0 + " % so với kích thước gốc");
 //        }
