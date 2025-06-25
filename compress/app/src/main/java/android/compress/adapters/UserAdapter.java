@@ -1,4 +1,4 @@
-package com.example.yourappname;
+package android.compress.adapters;
 
 import android.compress.models.FirebaseManager;
 import android.view.LayoutInflater;
