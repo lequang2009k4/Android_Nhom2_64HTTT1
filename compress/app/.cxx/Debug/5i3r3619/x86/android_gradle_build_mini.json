@@ -1,26 +1,26 @@
 {
   "buildFiles": [
-    "/Users/akai/AndroidStudioProjects/Android_Nhom2_64HTTT1/compress/app/src/main/cpp/CMakeLists.txt"
+    "D:\\Android_Nhom2_64HTTT1\\compress\\app\\src\\main\\cpp\\CMakeLists.txt"
   ],
   "cleanCommandsComponents": [
     [
-      "/Users/akai/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "C:\\Users\\Admin\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
       "-C",
-      "/Users/akai/AndroidStudioProjects/Android_Nhom2_64HTTT1/compress/app/.cxx/Debug/5i3r3619/x86",
+      "D:\\Android_Nhom2_64HTTT1\\compress\\app\\.cxx\\Debug\\5i3r3619\\x86",
       "clean"
     ]
   ],
   "buildTargetsCommandComponents": [
-    "/Users/akai/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "C:\\Users\\Admin\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
     "-C",
-    "/Users/akai/AndroidStudioProjects/Android_Nhom2_64HTTT1/compress/app/.cxx/Debug/5i3r3619/x86",
+    "D:\\Android_Nhom2_64HTTT1\\compress\\app\\.cxx\\Debug\\5i3r3619\\x86",
     "{LIST_OF_TARGETS_TO_BUILD}"
   ],
   "libraries": {
     "imagecompressor::@6890427a1f51a3e7e1df": {
       "artifactName": "imagecompressor",
       "abi": "x86",
-      "output": "/Users/akai/AndroidStudioProjects/Android_Nhom2_64HTTT1/compress/app/build/intermediates/cxx/Debug/5i3r3619/obj/x86/libimagecompressor.so",
+      "output": "D:\\Android_Nhom2_64HTTT1\\compress\\app\\build\\intermediates\\cxx\\Debug\\5i3r3619\\obj\\x86\\libimagecompressor.so",
       "runtimeFiles": []
     }
   }
