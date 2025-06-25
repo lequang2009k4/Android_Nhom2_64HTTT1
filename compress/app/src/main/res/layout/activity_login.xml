@@ -106,7 +106,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/forgot_password"
-            android:textColor="#F57C00"
+            android:textColor="#F68D1D"
             android:textStyle="bold"
             app:layout_constraintBaseline_toBaselineOf="@id/checkbox_remember_me"
             app:layout_constraintEnd_toEndOf="@id/input_layout_password" />
@@ -117,7 +117,7 @@
             android:layout_width="0dp"
             android:layout_height="60dp"
             android:layout_marginTop="24dp"
-            android:backgroundTint="#F57C00"
+            android:backgroundTint="#F68D1D"
             android:text="@string/login_button"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
@@ -153,7 +153,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:text="@string/register_link"
-                android:textColor="#F57C00"
+                android:textColor="#F68D1D"
                 android:textSize="16sp"
                 android:textStyle="bold" />
         </LinearLayout>

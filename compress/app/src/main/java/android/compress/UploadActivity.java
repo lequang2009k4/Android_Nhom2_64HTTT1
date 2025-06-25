@@ -9,8 +9,10 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -36,6 +38,7 @@ public class UploadActivity extends AppCompatActivity {
     private Button btnConfirm;
     private Uri selectedImageUri;
     private Bitmap photoBitmap;
+    private ProgressBar progressBar;
 
     private ImageView imagePlaceholder;
 
@@ -79,6 +82,7 @@ public class UploadActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload);
+        progressBar = findViewById(R.id.progress_loading);
         
         // Khởi tạo StorageManager
         StorageManager.init(getApplicationContext());
@@ -89,6 +93,9 @@ public class UploadActivity extends AppCompatActivity {
 
         // In UploadActivity.java, inside btnConfirm.setOnClickListener
         btnConfirm.setOnClickListener(v -> {
+            btnConfirm.setEnabled(false);
+            progressBar.setVisibility(View.VISIBLE);
+
             String ext = getFileExtension(selectedImageUri);
             String uploadDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault()).format(new Date());
             // String fileName = "uploaded/" + System.currentTimeMillis() + "." + ext;
@@ -97,13 +104,17 @@ public class UploadActivity extends AppCompatActivity {
             
             if (uploadPath == null) {
                 Toast.makeText(this, "Vui lòng đăng nhập trước khi tải lên ảnh", Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.GONE);
+                btnConfirm.setEnabled(true);
                 return;
             }
             
             String fileName = uploadPath + System.currentTimeMillis() + "." + ext;
 
             if (!isImageFileAllowed(fileName)) {
-                Toast.makeText(this, "Only JPG are allowed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Chỉ cho phép file JPG", Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.GONE);
+                btnConfirm.setEnabled(true);
                 return;
             }
 
@@ -178,6 +189,9 @@ public class UploadActivity extends AppCompatActivity {
 
         btnUpload.setOnClickListener(v -> openGallery());
         btnTakePhoto.setOnClickListener(v -> checkCameraPermissionAndOpenCamera());
+
+        progressBar.setVisibility(View.GONE);
+        btnConfirm.setEnabled(true);
     }
 
     private void openGallery() {
