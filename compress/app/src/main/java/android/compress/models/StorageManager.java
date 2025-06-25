@@ -349,9 +349,9 @@ public class StorageManager {
         if (sizeBytes < 1024) {
             return sizeBytes + " B";
         } else if (sizeBytes < 1024 * 1024) {
-            return (sizeBytes / 1024) + " KB";
+            return String.format(Locale.getDefault(), "%.2f KB", sizeBytes / 1024.0);
         } else {
-            return String.format(Locale.getDefault(), "%.1f MB", sizeBytes / (1024.0 * 1024.0));
+            return String.format(Locale.getDefault(), "%.2f MB", sizeBytes / (1024.0 * 1024.0));
         }
     }
 

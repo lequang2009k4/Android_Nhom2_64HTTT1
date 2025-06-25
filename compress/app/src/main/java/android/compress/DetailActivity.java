@@ -72,6 +72,7 @@ public class DetailActivity extends AppCompatActivity {
             } else if (bitmap != null) {
                 intentNext.putExtra("image_bitmap", bitmap);
             }
+            intentNext.putExtra("original_size", fileSize);
             intentNext.putExtra("file_name", fileNameToUpload.split("/")[1].split("\\.")[0] + "_compressed.jpg"); // Chỉ lấy tên file
             startActivity(intentNext);
         });

@@ -34,6 +34,19 @@ public class ResultCompressActivity extends AppCompatActivity {
         btnComplete = findViewById(R.id.btn_complete);
         ImageView imageViewCompressed = findViewById(R.id.imageViewCompressed);
 
+        String originalSize = getIntent().getStringExtra("original_size");
+        String compressedSize = getIntent().getStringExtra("file_size");
+
+//        if (originalSize > 0 && compressedSize > 0 && compressedSize < originalSize) {
+        double original = Double.parseDouble(originalSize.split(" ")[0]);
+        double compressed = Double.parseDouble(compressedSize.split(" ")[0]);
+        double reductionPercent = ((original - compressed) * 100.0) / original;
+        String reductionText = String.format("%.2f%%", reductionPercent);
+        tvReductionInfo.setText("Giảm " + reductionText + " so với kích thước gốc");
+//        } else {
+//            tvReductionInfo.setText("Giảm " + 0 + " % so với kích thước gốc");
+//        }
+
         String filePath = getIntent().getStringExtra("file_path");
         if (filePath != null) {
             Bitmap bitmap = BitmapFactory.decodeFile(filePath);
@@ -58,7 +71,7 @@ public class ResultCompressActivity extends AppCompatActivity {
         btnComplete.setOnClickListener(v -> {
             // Làm mới cache để hiển thị ảnh mới khi về màn hình chính
             StorageManager.refreshCache();
-            
+
             // Chuyển về màn hình chính hoặc một màn hình khác
 //             Ví dụ: finish(); // Đóng Activity hiện tại
 //             Hoặc: Intent homeIntent = new Intent(ResultCompressActivity.this, MainActivity.class);
