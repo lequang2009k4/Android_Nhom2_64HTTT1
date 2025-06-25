@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">YourAppName</string> <!-- Thay bằng tên ứng dụng của bạn -->
+    <string name="app_name">LossyCompress</string> <!-- Thay bằng tên ứng dụng của bạn -->
 
     <!-- Màn hình chào (Welcome Screen) -->
     <string name="background_image_desc">Hình nền trang trí</string>

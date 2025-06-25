@@ -109,7 +109,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(FirebaseManager.User user) {
                 // Hiển thị userId để debug
-                Toast.makeText(LoginActivity.this, "UserID đã lấy được: " + user.getUserId(), Toast.LENGTH_LONG).show();
+//                Toast.makeText(LoginActivity.this, "UserID đã lấy được: " + user.getUserId(), Toast.LENGTH_LONG).show();
                 
                 // Lưu thông tin người dùng
                 UserManager.saveUserInfo(LoginActivity.this, user.getUserId(), user.getUsername());
@@ -123,6 +123,7 @@ public class LoginActivity extends AppCompatActivity {
                 // Điều hướng dựa trên vai trò
                 if ("admin".equals(user.getRole())) {
                     startActivity(new Intent(LoginActivity.this, AdminDashboardActivity.class));
+                    Toast.makeText(LoginActivity.this, "Chào mừng Admin", Toast.LENGTH_SHORT).show();
                 } else {
                     startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                     Toast.makeText(LoginActivity.this, "Chào mừng user " + user.getUsername(), Toast.LENGTH_SHORT).show();

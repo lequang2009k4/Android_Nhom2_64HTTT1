@@ -1,5 +1,4 @@
 package android.compress.adapters;
-
 import android.compress.R;
 import android.compress.models.FirebaseManager;
 import android.view.LayoutInflater;
@@ -15,7 +14,7 @@ import java.util.List;
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
 
     private List<FirebaseManager.User> userList;
-    private List<FirebaseManager.User> userListFull; // Dùng để lưu danh sách gốc cho việc tìm kiếm
+    private List<FirebaseManager.User> userListFull;
     private OnUserDeleteListener deleteListener;
 
     public interface OnUserDeleteListener {
@@ -24,7 +23,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     public UserAdapter(List<FirebaseManager.User> userList, OnUserDeleteListener listener) {
         this.userList = userList;
-        this.userListFull = new ArrayList<>(userList); // Sao chép danh sách gốc
+        this.userListFull = new ArrayList<>(userList);
         this.deleteListener = listener;
     }
 
@@ -39,7 +38,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
         FirebaseManager.User user = userList.get(position);
         holder.fullNameTextView.setText(user.getFullName());
-        // TODO: Cập nhật các trường dữ liệu thật (số file, v.v...)
+        holder.phoneTextView.setText(user.getPhone()); // CẬP NHẬT: Hiển thị số điện thoại
 
         holder.deleteButton.setOnClickListener(v -> {
             if (deleteListener != null) {
@@ -53,7 +52,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         return userList.size();
     }
 
-    // Hàm để lọc danh sách khi tìm kiếm
     public void filter(String text) {
         userList.clear();
         if (text.isEmpty()) {
@@ -61,7 +59,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         } else {
             text = text.toLowerCase();
             for (FirebaseManager.User item : userListFull) {
-                if (item.getUsername().toLowerCase().contains(text)) {
+                // Có thể tìm theo tên hoặc số điện thoại
+                if (item.getUsername().toLowerCase().contains(text) || item.getPhone().contains(text)) {
                     userList.add(item);
                 }
             }
@@ -69,21 +68,24 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         notifyDataSetChanged();
     }
 
-    // Hàm để xóa item khỏi adapter
     public void removeItem(int position) {
+        // Cần tìm đúng item trong userListFull để xóa
+        FirebaseManager.User userToRemove = userList.get(position);
+        userListFull.remove(userToRemove);
         userList.remove(position);
-        userListFull.remove(position); // Cũng xóa khỏi danh sách gốc
         notifyItemRemoved(position);
     }
 
+    // CẬP NHẬT: ViewHolder để ánh xạ đúng các view mới
     static class UserViewHolder extends RecyclerView.ViewHolder {
         TextView fullNameTextView;
+        TextView phoneTextView; // CẬP NHẬT: Thêm view cho SĐT
         ImageButton deleteButton;
-        // Thêm các view khác nếu cần
 
         public UserViewHolder(@NonNull View itemView) {
             super(itemView);
             fullNameTextView = itemView.findViewById(R.id.text_view_fullname);
+            phoneTextView = itemView.findViewById(R.id.text_view_phone); // CẬP NHẬT
             deleteButton = itemView.findViewById(R.id.button_delete);
         }
     }
