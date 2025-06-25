@@ -1,1 +1,1 @@
-/Users/akai/AndroidStudioProjects/Android_Nhom2_64HTTT1/compress/app/src/main/cpp/CMakeLists.txt
+D:\Android_Nhom2_64HTTT1\compress\app\src\main\cpp\CMakeLists.txt
