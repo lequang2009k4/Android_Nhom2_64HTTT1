@@ -26,6 +26,8 @@ public class LoadingCompressActivity extends AppCompatActivity {
         System.loadLibrary("imagecompressor");
     }
 
+    private String originalSize;
+
     private native byte[] compressImage(byte[] imageData, int quality);
 
     @Override
@@ -35,6 +37,7 @@ public class LoadingCompressActivity extends AppCompatActivity {
 
         String imageUriStr = getIntent().getStringExtra("image_uri");
         Bitmap bitmap = getIntent().getParcelableExtra("image_bitmap");
+        originalSize = getIntent().getStringExtra("original_size");
 
         Object input = imageUriStr != null ? imageUriStr : bitmap;
         if (input == null) {
@@ -114,6 +117,7 @@ public class LoadingCompressActivity extends AppCompatActivity {
                     Intent intentNext = new Intent(LoadingCompressActivity.this, ResultCompressActivity.class);
                     intentNext.putExtra("file_path", file.getAbsolutePath());
                     intentNext.putExtra("file_name", newFileName);
+                    intentNext.putExtra("original_size", originalSize);
                     intentNext.putExtra("file_size", fileSizeStr);
                     intentNext.putExtra("compression_date", uploadDate);
                     startActivity(intentNext);

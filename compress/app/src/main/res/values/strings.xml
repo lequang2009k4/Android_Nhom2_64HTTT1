@@ -4,7 +4,7 @@
     <!-- Màn hình chào (Welcome Screen) -->
     <string name="background_image_desc">Hình nền trang trí</string>
     <string name="logo_app_desc">Logo của ứng dụng</string>
-    <string name="hello_user">Hello, bạn hiền!</string>
+    <string name="hello_user">Xin chào, bạn hiền!</string>
     <string name="app_description">Bạn đang cần nén ảnh sao? Bạn chọn đúng nền văn minh rồi đấy!</string>
     <string name="continue_button">Tiếp tục</string>
 
@@ -12,7 +12,7 @@
     <string name="login_title">Đăng nhập</string>
     <string name="username_hint">Tên đăng nhập *</string>
     <string name="password_hint">Mật khẩu *</string>
-    <string name="remember_me">Nhớ thông tin đăng nhập</string>
+    <string name="remember_me">Nhớ thông tin </string>
     <string name="forgot_password">Quên mật khẩu</string>
     <string name="login_button">Đăng nhập</string>
     <string name="no_account_prompt">Bạn chưa có tài khoản?</string>
@@ -47,7 +47,7 @@
     <string name="confirm_button_text">Xác nhận</string>
     <string name="passwords_do_not_match">Mật khẩu không khớp. Vui lòng thử lại.</string>
     <string name="password_updated_success">Cập nhật mật khẩu thành công!</string>
-    
+
     <!-- Màn hình Tìm kiếm (Search Screen) -->
     <string name="search_hint">Tìm kiếm ảnh...</string>
     <string name="search_label">Tìm kiếm:</string>

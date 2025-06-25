@@ -1,15 +1,9 @@
-package android.compress.models; // Thay bằng package name của bạn
+package android.compress.models;
 
 import android.app.Activity;
-import android.content.Context;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseException;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
@@ -23,36 +17,24 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Lớp quản lý tất cả các tương tác với Firebase.
- */
 public class FirebaseManager {
 
     private static final DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference("users");
     private static final FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
-    public interface AuthCallback {
-        void onSuccess(User user);
-        void onFailure(String message);
-    }
+    // === INTERFACES ===
+    public interface AuthCallback { void onSuccess(User user); void onFailure(String message); }
+    public interface VerificationCallback { void onVerified(String verificationId); void onFailure(String message); }
+    public interface SimpleCallback { void onSuccess(String message); void onFailure(String message); }
+    public interface UserListCallback { void onSuccess(List<User> userList); void onFailure(String message); }
 
-    public interface VerificationCallback {
-        void onVerified(String verificationId);
-        void onFailure(String message);
-    }
-
-    public interface SimpleCallback {
-        void onSuccess(String message);
-        void onFailure(String message);
-    }
-
-    // =================================================================================
-    // 1. ĐĂNG KÝ
-    // =================================================================================
+    // === LOGIC ĐĂNG KÝ, ĐĂNG NHẬP, QUÊN MẬT KHẨU (Giữ nguyên) ===
     public static void sendRegistrationOtp(Activity activity, String username, String phone, VerificationCallback callback) {
-        // ... (Giữ nguyên logic kiểm tra)
         Query usernameQuery = dbRef.orderByChild("username").equalTo(username);
         usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -84,16 +66,10 @@ public class FirebaseManager {
         });
     }
 
-    /**
-     * *** ĐÃ SỬA LỖI LOGIC ***
-     * Bước 2 của Đăng ký: Xác thực OTP và tạo người dùng.
-     */
     public static void verifyOtpAndRegisterUser(String verificationId, String otpCode, User user, SimpleCallback callback) {
         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, otpCode);
-        // Dùng signInWithCredential để XÁC THỰC OTP VỚI SERVER
         mAuth.signInWithCredential(credential)
                 .addOnSuccessListener(authResult -> {
-                    // OTP ĐÚNG -> Tiếp tục lưu người dùng
                     String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
                     user.setPassword(hashedPassword);
                     user.setRole("user");
@@ -102,7 +78,6 @@ public class FirebaseManager {
                     if (userId != null) {
                         dbRef.child(userId).setValue(user)
                                 .addOnSuccessListener(aVoid -> {
-                                    // Đăng xuất người dùng khỏi Firebase Auth ngay lập tức
                                     mAuth.signOut();
                                     callback.onSuccess("Đăng ký thành công!");
                                 })
@@ -111,17 +86,10 @@ public class FirebaseManager {
                         callback.onFailure("Không thể tạo ID người dùng.");
                     }
                 })
-                .addOnFailureListener(e -> {
-                    // OTP SAI
-                    callback.onFailure("Mã OTP không hợp lệ.");
-                });
+                .addOnFailureListener(e -> callback.onFailure("Mã OTP không hợp lệ."));
     }
 
-    // =================================================================================
-    // 2. ĐĂNG NHẬP
-    // =================================================================================
     public static void loginWithUsername(String username, String rawPassword, AuthCallback callback) {
-        // ... (Giữ nguyên logic)
         Query query = dbRef.orderByChild("username").equalTo(username).limitToFirst(1);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -149,11 +117,7 @@ public class FirebaseManager {
         });
     }
 
-    // =================================================================================
-    // 3. QUÊN MẬT KHẨU
-    // =================================================================================
     public static void sendPasswordResetOtp(Activity activity, String phone, VerificationCallback callback) {
-        // ... (Giữ nguyên logic)
         Query phoneQuery = dbRef.orderByChild("phone").equalTo(phone);
         phoneQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -171,28 +135,17 @@ public class FirebaseManager {
         });
     }
 
-    /**
-     * *** ĐÃ SỬA LỖI LOGIC ***
-     * Chỉ xác thực OTP. Dùng cho luồng quên mật khẩu.
-     */
     public static void verifyOtp(String verificationId, String otpCode, SimpleCallback callback) {
         PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, otpCode);
-        // Dùng signInWithCredential để XÁC THỰC OTP VỚI SERVER
         mAuth.signInWithCredential(credential)
                 .addOnSuccessListener(authResult -> {
-                    // OTP ĐÚNG
-                    // Đăng xuất ngay lập tức vì không cần giữ phiên đăng nhập
                     mAuth.signOut();
                     callback.onSuccess("Xác thực OTP thành công!");
                 })
-                .addOnFailureListener(e -> {
-                    // OTP SAI
-                    callback.onFailure("Mã OTP không hợp lệ.");
-                });
+                .addOnFailureListener(e -> callback.onFailure("Mã OTP không hợp lệ."));
     }
 
     public static void updatePassword(String phone, String newRawPassword, SimpleCallback callback) {
-        // ... (Giữ nguyên logic)
         Query query = dbRef.orderByChild("phone").equalTo(phone).limitToFirst(1);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -217,10 +170,53 @@ public class FirebaseManager {
     }
 
     // =================================================================================
-    // HÀM TIỆN ÍCH CHUNG
+    // 4. CHỨC NĂNG ADMIN
     // =================================================================================
+
+    /**
+     * *** ĐÃ SỬA LỖI LOGIC ***
+     * Lấy danh sách tất cả người dùng CÓ VAI TRÒ "user" từ Realtime Database.
+     */
+    public static void getAllUsers(UserListCallback callback) {
+        // Firebase RTDB không hỗ trợ truy vấn "not equal to".
+        // Vì vậy, chúng ta sẽ lấy tất cả và lọc ở phía client.
+        dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<User> userList = new ArrayList<>();
+                for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                    User user = userSnapshot.getValue(User.class);
+                    // CHỈ THÊM VÀO DANH SÁCH NẾU VAI TRÒ KHÔNG PHẢI LÀ 'admin'
+                    if (user != null && !"admin".equals(user.getRole())) {
+                        user.setUserId(userSnapshot.getKey());
+                        userList.add(user);
+                    }
+                }
+                callback.onSuccess(userList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                callback.onFailure(error.getMessage());
+            }
+        });
+    }
+
+    /**
+     * Xóa một người dùng khỏi Realtime Database dựa trên ID.
+     */
+    public static void deleteUser(String userId, SimpleCallback callback) {
+        if (userId == null || userId.isEmpty()) {
+            callback.onFailure("User ID không hợp lệ.");
+            return;
+        }
+        dbRef.child(userId).removeValue()
+                .addOnSuccessListener(aVoid -> callback.onSuccess("Xóa người dùng thành công."))
+                .addOnFailureListener(e -> callback.onFailure("Lỗi khi xóa người dùng: " + e.getMessage()));
+    }
+
+    // === CÁC PHƯƠNG THỨC KHÁC (Giữ nguyên) ===
     private static void sendOtp(Activity activity, String phone, VerificationCallback callback) {
-        // ... (Giữ nguyên logic)
         if (!phone.startsWith("+")) {
             if (phone.startsWith("0")) {
                 phone = "+84" + phone.substring(1);
@@ -254,20 +250,31 @@ public class FirebaseManager {
     // LỚP MODEL
     // =================================================================================
     public static class User {
+        private String userId;
         private String username;
         private String phone;
         private String password;
         private String role;
-        public User() {}
+        private String fullName;
+
+        public User() { /* Cần constructor rỗng */ }
+
         public User(String username, String phone, String password) {
             this.username = username;
             this.phone = phone;
             this.password = password;
         }
+
+        // Getters
+        public String getUserId() { return userId; }
         public String getUsername() { return username; }
         public String getPhone() { return phone; }
         public String getPassword() { return password; }
         public String getRole() { return role; }
+        public String getFullName() { return username; }
+
+        // Setters
+        public void setUserId(String userId) { this.userId = userId; }
         public void setPassword(String password) { this.password = password; }
         public void setRole(String role) { this.role = role; }
     }

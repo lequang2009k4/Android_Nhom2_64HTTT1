@@ -23,6 +23,9 @@
         android:theme="@style/Theme.Compress"
         tools:targetApi="31">
         <activity
+            android:name=".AdminDashboardActivity"
+            android:exported="false" />
+        <activity
             android:name=".ResultCompressActivity"
             android:exported="false" />
         <activity
@@ -32,6 +35,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
@@ -77,18 +81,15 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.default_searchable"
                 android:value=".SearchActivity" />
-        </activity>
-        
-        <!-- Provider cho lịch sử tìm kiếm -->
+        </activity> <!-- Provider cho lịch sử tìm kiếm -->
         <provider
             android:name=".providers.SearchSuggestionProvider"
             android:authorities="android.compress.providers.SearchSuggestionProvider"
-            android:exported="false" />
-            
-        <!-- FileProvider để chia sẻ file từ bộ nhớ cache -->
+            android:exported="false" /> <!-- FileProvider để chia sẻ file từ bộ nhớ cache -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"

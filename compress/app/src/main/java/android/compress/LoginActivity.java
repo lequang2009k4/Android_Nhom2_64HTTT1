@@ -5,7 +5,7 @@ import android.compress.models.FirebaseManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.CheckBox; // CẬP NHẬT: Thêm import
+import android.widget.CheckBox;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,7 +18,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText usernameEditText, passwordEditText;
     private ProgressDialog progressDialog;
 
-    // CẬP NHẬT: Thêm các biến cho tính năng "Ghi nhớ đăng nhập"
+    // Các biến cho tính năng "Ghi nhớ đăng nhập"
     private CheckBox rememberMeCheckBox;
     private SharedPreferences loginPreferences;
     private static final String PREFS_NAME = "login_prefs";
@@ -38,14 +38,14 @@ public class LoginActivity extends AppCompatActivity {
         usernameEditText = findViewById(R.id.edit_text_username);
         passwordEditText = findViewById(R.id.edit_text_password);
         MaterialButton loginButton = findViewById(R.id.button_login);
-        rememberMeCheckBox = findViewById(R.id.checkbox_remember_me); // CẬP NHẬT
+        rememberMeCheckBox = findViewById(R.id.checkbox_remember_me);
 
         // Khởi tạo ProgressDialog
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Đang đăng nhập...");
         progressDialog.setCancelable(false);
 
-        // CẬP NHẬT: Tải thông tin đăng nhập đã lưu (nếu có)
+        // Tải thông tin đăng nhập đã lưu (nếu có)
         loginPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         loadCredentials();
 
@@ -56,7 +56,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * Tải thông tin đăng nhập từ SharedPreferences và điền vào các ô tương ứng.
+     * Tải thông tin đăng nhập từ SharedPreferences.
      */
     private void loadCredentials() {
         boolean shouldRemember = loginPreferences.getBoolean(KEY_REMEMBER, false);
@@ -68,20 +68,18 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * Lưu hoặc xóa thông tin đăng nhập dựa vào trạng thái của CheckBox.
+     * Lưu hoặc xóa thông tin đăng nhập dựa vào CheckBox.
      */
     private void manageCredentials() {
         SharedPreferences.Editor editor = loginPreferences.edit();
         if (rememberMeCheckBox.isChecked()) {
-            // Lưu thông tin
             editor.putString(KEY_USERNAME, usernameEditText.getText().toString().trim());
             editor.putString(KEY_PASSWORD, passwordEditText.getText().toString().trim());
             editor.putBoolean(KEY_REMEMBER, true);
         } else {
-            // Xóa thông tin
             editor.clear();
         }
-        editor.apply(); // Áp dụng thay đổi
+        editor.apply();
     }
 
     /**
@@ -98,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
 
         progressDialog.show();
 
-        // CẬP NHẬT: Quản lý việc lưu/xóa thông tin đăng nhập
+        // Quản lý việc lưu/xóa thông tin đăng nhập
         manageCredentials();
 
         // Gọi phương thức đăng nhập từ FirebaseManager
@@ -106,15 +104,17 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(FirebaseManager.User user) {
                 progressDialog.dismiss();
-                Toast.makeText(LoginActivity.this, "Đăng nhập thành công! Role: " + user.getRole(), Toast.LENGTH_LONG).show();
+                Toast.makeText(LoginActivity.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
 
-                // TODO: Chuyển đến màn hình chính
+                // Điều hướng dựa trên vai trò
                 if ("admin".equals(user.getRole())) {
-//                     startActivity(new Intent(LoginActivity.this, AdminDashboardActivity.class));
+                    startActivity(new Intent(LoginActivity.this, AdminDashboardActivity.class));
                 } else {
-                    startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                    // TODO: Chuyển đến màn hình chính cho user thường
+                     startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                    Toast.makeText(LoginActivity.this, "Chào mừng user " + user.getUsername(), Toast.LENGTH_SHORT).show();
                 }
-                finish();
+                finish(); // Đóng màn hình đăng nhập
             }
 
             @Override
