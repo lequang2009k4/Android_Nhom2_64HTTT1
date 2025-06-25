@@ -111,7 +111,7 @@ public class LoginActivity extends AppCompatActivity {
                     startActivity(new Intent(LoginActivity.this, AdminDashboardActivity.class));
                 } else {
                     // TODO: Chuyển đến màn hình chính cho user thường
-                    // startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                     startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                     Toast.makeText(LoginActivity.this, "Chào mừng user " + user.getUsername(), Toast.LENGTH_SHORT).show();
                 }
                 finish(); // Đóng màn hình đăng nhập

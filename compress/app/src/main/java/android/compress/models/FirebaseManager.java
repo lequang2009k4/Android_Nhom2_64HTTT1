@@ -19,6 +19,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class FirebaseManager {
@@ -32,9 +33,7 @@ public class FirebaseManager {
     public interface SimpleCallback { void onSuccess(String message); void onFailure(String message); }
     public interface UserListCallback { void onSuccess(List<User> userList); void onFailure(String message); }
 
-    // =================================================================================
-    // 1. ĐĂNG KÝ
-    // =================================================================================
+    // === LOGIC ĐĂNG KÝ, ĐĂNG NHẬP, QUÊN MẬT KHẨU (Giữ nguyên) ===
     public static void sendRegistrationOtp(Activity activity, String username, String phone, VerificationCallback callback) {
         Query usernameQuery = dbRef.orderByChild("username").equalTo(username);
         usernameQuery.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -90,9 +89,6 @@ public class FirebaseManager {
                 .addOnFailureListener(e -> callback.onFailure("Mã OTP không hợp lệ."));
     }
 
-    // =================================================================================
-    // 2. ĐĂNG NHẬP
-    // =================================================================================
     public static void loginWithUsername(String username, String rawPassword, AuthCallback callback) {
         Query query = dbRef.orderByChild("username").equalTo(username).limitToFirst(1);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -121,9 +117,6 @@ public class FirebaseManager {
         });
     }
 
-    // =================================================================================
-    // 3. QUÊN MẬT KHẨU
-    // =================================================================================
     public static void sendPasswordResetOtp(Activity activity, String phone, VerificationCallback callback) {
         Query phoneQuery = dbRef.orderByChild("phone").equalTo(phone);
         phoneQuery.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -180,14 +173,21 @@ public class FirebaseManager {
     // 4. CHỨC NĂNG ADMIN
     // =================================================================================
 
+    /**
+     * *** ĐÃ SỬA LỖI LOGIC ***
+     * Lấy danh sách tất cả người dùng CÓ VAI TRÒ "user" từ Realtime Database.
+     */
     public static void getAllUsers(UserListCallback callback) {
+        // Firebase RTDB không hỗ trợ truy vấn "not equal to".
+        // Vì vậy, chúng ta sẽ lấy tất cả và lọc ở phía client.
         dbRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 List<User> userList = new ArrayList<>();
                 for (DataSnapshot userSnapshot : snapshot.getChildren()) {
                     User user = userSnapshot.getValue(User.class);
-                    if (user != null) {
+                    // CHỈ THÊM VÀO DANH SÁCH NẾU VAI TRÒ KHÔNG PHẢI LÀ 'admin'
+                    if (user != null && !"admin".equals(user.getRole())) {
                         user.setUserId(userSnapshot.getKey());
                         userList.add(user);
                     }
@@ -202,6 +202,9 @@ public class FirebaseManager {
         });
     }
 
+    /**
+     * Xóa một người dùng khỏi Realtime Database dựa trên ID.
+     */
     public static void deleteUser(String userId, SimpleCallback callback) {
         if (userId == null || userId.isEmpty()) {
             callback.onFailure("User ID không hợp lệ.");
@@ -212,10 +215,7 @@ public class FirebaseManager {
                 .addOnFailureListener(e -> callback.onFailure("Lỗi khi xóa người dùng: " + e.getMessage()));
     }
 
-
-    // =================================================================================
-    // HÀM TIỆN ÍCH CHUNG
-    // =================================================================================
+    // === CÁC PHƯƠNG THỨC KHÁC (Giữ nguyên) ===
     private static void sendOtp(Activity activity, String phone, VerificationCallback callback) {
         if (!phone.startsWith("+")) {
             if (phone.startsWith("0")) {
@@ -271,7 +271,7 @@ public class FirebaseManager {
         public String getPhone() { return phone; }
         public String getPassword() { return password; }
         public String getRole() { return role; }
-        public String getFullName() { return username; } // Tạm thời dùng username cho đơn giản
+        public String getFullName() { return username; }
 
         // Setters
         public void setUserId(String userId) { this.userId = userId; }
