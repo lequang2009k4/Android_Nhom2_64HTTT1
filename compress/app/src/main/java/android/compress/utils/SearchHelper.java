@@ -66,6 +66,10 @@ public class SearchHelper {
     private static void openSearchActivity(Activity activity, String query) {
         Intent intent = new Intent(activity, SearchActivity.class);
         intent.putExtra("search_query", query);
+        
+        // Đảm bảo tạo một instance mới của SearchActivity
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        
         activity.startActivity(intent);
     }
 } 
