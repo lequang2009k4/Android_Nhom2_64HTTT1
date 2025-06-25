@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="48dp"
         android:text="Upload file"
         android:textColor="@android:color/black"
         android:textSize="24sp"
@@ -38,7 +38,7 @@
             android:layout_height="200dp"
             android:layout_gravity="center"
             android:contentDescription="Image Placeholder"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
             android:src="@drawable/ic_image_placeholder" />
     </androidx.cardview.widget.CardView>
 

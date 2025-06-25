@@ -91,6 +91,12 @@ public class UploadActivity extends AppCompatActivity {
         btnConfirm = findViewById(R.id.btn_confirm);
         btnConfirm.setEnabled(false); // Disable by default
 
+        Button btnUpload = findViewById(R.id.btn_upload);
+        Button btnTakePhoto = findViewById(R.id.btn_take_photo);
+
+        btnUpload.setOnClickListener(v -> openGallery());
+        btnTakePhoto.setOnClickListener(v -> checkCameraPermissionAndOpenCamera());
+
         // In UploadActivity.java, inside btnConfirm.setOnClickListener
         btnConfirm.setOnClickListener(v -> {
             btnConfirm.setEnabled(false);
@@ -148,8 +154,12 @@ public class UploadActivity extends AppCompatActivity {
                             intent.putExtra("file_size", fileSize);
                             intent.putExtra("upload_date", uploadDate);
                             startActivity(intent);
+                            progressBar.setVisibility(View.GONE);
+                            btnConfirm.setEnabled(true);
                         }))
                         .addOnFailureListener(e -> {
+                            progressBar.setVisibility(View.GONE);
+                            btnConfirm.setEnabled(true);
                             Toast.makeText(this, "Upload failed", Toast.LENGTH_SHORT).show();
                         });
             } else if (photoBitmap != null) {
@@ -177,21 +187,18 @@ public class UploadActivity extends AppCompatActivity {
                             intent.putExtra("file_size", fileSize);
                             intent.putExtra("upload_date", uploadDate);
                             startActivity(intent);
+                            progressBar.setVisibility(View.GONE);
+                            btnConfirm.setEnabled(true);
                         }))
                         .addOnFailureListener(e -> {
+                            progressBar.setVisibility(View.GONE);
+                            btnConfirm.setEnabled(true);
                             Toast.makeText(this, "Upload failed", Toast.LENGTH_SHORT).show();
                         });
             }
         });
 
-        Button btnUpload = findViewById(R.id.btn_upload);
-        Button btnTakePhoto = findViewById(R.id.btn_take_photo);
 
-        btnUpload.setOnClickListener(v -> openGallery());
-        btnTakePhoto.setOnClickListener(v -> checkCameraPermissionAndOpenCamera());
-
-        progressBar.setVisibility(View.GONE);
-        btnConfirm.setEnabled(true);
     }
 
     private void openGallery() {

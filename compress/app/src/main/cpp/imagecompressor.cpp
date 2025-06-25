@@ -3,13 +3,13 @@
 #include <cstring>
 #include <algorithm>
 
-// Cách 1: Chỉ xóa EXIF data ở đầu file JPEG (cực kỳ an toàn)
+// Option 1: xóa EXIF đầu file JPEG
 std::vector<jbyte> removeJpegExif(const std::vector<jbyte>& data) {
-    // Kiểm tra nếu là JPEG
+    // nếu là JPEG
     if (data.size() < 4 || 
         static_cast<unsigned char>(data[0]) != 0xFF || 
         static_cast<unsigned char>(data[1]) != 0xD8) {
-        return data; // Không phải JPEG, trả về nguyên bản
+        return data; // Không phải JPEG -> trả nguyên bản
     }
     
     std::vector<jbyte> result;
@@ -82,7 +82,7 @@ std::vector<jbyte> removeJpegExif(const std::vector<jbyte>& data) {
     return result;
 }
 
-// Cách 2: Chỉ cắt bớt dữ liệu ở cuối file nếu thực sự cần
+// Option 2: Chỉ cắt bớt dữ liệu ở cuối file nếu thực sự cần
 std::vector<jbyte> safeTruncate(const std::vector<jbyte>& data, int quality) {
     if (quality >= 80) return data; // Quality cao thì không động gì
     
@@ -129,18 +129,18 @@ Java_android_compress_LoadingCompressActivity_compressImage(JNIEnv *env, jobject
     
     // Giải phóng dữ liệu từ Java
     env->ReleaseByteArrayElements(imageData, data, JNI_ABORT);
-    
-    // === THUẬT TOÁN CỰC KỲ AN TOÀN ===
+
+    // === THUẬT TOÁN ===
     
     std::vector<jbyte> result = buffer;
     size_t originalSize = buffer.size();
     
-    // Bước 1: Chỉ xóa EXIF nếu là JPEG
+    // Option 1: Chỉ xóa EXIF nếu là JPEG
     if (quality < 90) {
         result = removeJpegExif(result);
     }
     
-    // Bước 2: Chỉ truncate nếu quality rất thấp và đã tiết kiệm được ít dung lượng
+    // Option 2: Chỉ truncate nếu quality rất thấp và đã tiết kiệm được ít dung lượng
     if (quality < 30 && result.size() > originalSize * 0.95) {
         std::vector<jbyte> truncated = safeTruncate(result, quality);
         result = truncated;

@@ -42,7 +42,8 @@ public class ResultCompressActivity extends AppCompatActivity {
         double compressed = Double.parseDouble(compressedSize.split(" ")[0]);
         double reductionPercent = ((original - compressed) * 100.0) / original;
         String reductionText = String.format("%.2f%%", reductionPercent);
-        tvReductionInfo.setText("Giảm " + reductionText + " so với kích thước gốc");
+        tvReductionInfo.setText("Đã tối ưu so với kích thước gốc");
+        tvPsnrValue.setText(reductionText);
 //        } else {
 //            tvReductionInfo.setText("Giảm " + 0 + " % so với kích thước gốc");
 //        }
