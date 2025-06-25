@@ -102,6 +102,7 @@ public class FirebaseManager {
                     User user = userSnapshot.getValue(User.class);
                     if (user != null) {
                         if (BCrypt.checkpw(rawPassword, user.getPassword())) {
+                            user.setUserId(userSnapshot.getKey());
                             callback.onSuccess(user);
                         } else {
                             callback.onFailure("Tên đăng nhập hoặc mật khẩu không đúng.");

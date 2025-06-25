@@ -2,10 +2,12 @@ package android.compress.utils;
 
 import android.app.Activity;
 import android.compress.SearchActivity;
+import android.compress.models.UserManager;
 import android.content.Intent;
 import android.provider.SearchRecentSuggestions;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.ImageView;
 
 import androidx.appcompat.widget.SearchView;
 
@@ -27,6 +29,9 @@ public class SearchHelper {
         
         View searchBarView = activity.findViewById(searchBarViewId);
         if (searchBarView != null) {
+            // Thiết lập avatar người dùng
+            setupUserAvatar(activity, searchBarView);
+            
             // Lấy SearchView
             SearchView searchView = searchBarView.findViewById(
                     activity.getResources().getIdentifier("search_view", "id", activity.getPackageName()));
@@ -54,6 +59,29 @@ public class SearchHelper {
                     }
                 });
             }
+        }
+    }
+    
+    /**
+     * Thiết lập avatar người dùng trong search bar
+     * 
+     * @param activity Activity hiện tại
+     * @param searchBarView View chứa search bar
+     */
+    private static void setupUserAvatar(Activity activity, View searchBarView) {
+        if (activity == null || searchBarView == null) return;
+        
+        // Tìm ImageView avatar
+        ImageView avatarImageView = searchBarView.findViewById(
+                activity.getResources().getIdentifier("image_view_avatar", "id", activity.getPackageName()));
+        
+        if (avatarImageView != null) {
+            // Lấy username hiện tại từ UserManager
+            String username = UserManager.getCurrentUsername(activity);
+            
+            // Tạo và hiển thị avatar từ chữ cái đầu tiên của username
+            AvatarUtils.TextDrawable avatar = AvatarUtils.createLetterAvatar(username);
+            avatarImageView.setImageDrawable(avatar);
         }
     }
     

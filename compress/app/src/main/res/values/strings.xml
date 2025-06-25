@@ -4,7 +4,7 @@
     <!-- Màn hình chào (Welcome Screen) -->
     <string name="background_image_desc">Hình nền trang trí</string>
     <string name="logo_app_desc">Logo của ứng dụng</string>
-    <string name="hello_user">Xin chào, bạn hiền!</string>
+    <string name="hello_user">Hello, bạn hiền!</string>
     <string name="app_description">Bạn đang cần nén ảnh sao? Bạn chọn đúng nền văn minh rồi đấy!</string>
     <string name="continue_button">Tiếp tục</string>
 

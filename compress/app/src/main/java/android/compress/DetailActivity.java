@@ -37,6 +37,9 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        
+        // Khởi tạo StorageManager
+        StorageManager.init(getApplicationContext());
 
         ImageView imageView = findViewById(R.id.imageView); // Đặt id đúng với layout
         TextView tvFileName = findViewById(R.id.tv_file_name);
@@ -64,7 +67,16 @@ public class DetailActivity extends AppCompatActivity {
         btnCompress.setOnClickListener(v -> {
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageRef = storage.getReference();
-            final String fileNameToUpload = "compressed/" + fileName;
+            // final String fileNameToUpload = "compressed/" + fileName;
+            // final String fileNameToUpload = StorageManager.getCurrentUserCompressPath() + fileName;
+            String compressPath = StorageManager.getCurrentUserCompressPath();
+            
+            if (compressPath == null) {
+                Toast.makeText(this, "Vui lòng đăng nhập trước khi nén ảnh", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            final String fileNameToUpload = compressPath + fileName;
 
             Intent intentNext = new Intent(DetailActivity.this, LoadingCompressActivity.class);
             if (imageUriStr != null) {
@@ -73,7 +85,13 @@ public class DetailActivity extends AppCompatActivity {
                 intentNext.putExtra("image_bitmap", bitmap);
             }
             intentNext.putExtra("original_size", fileSize);
-            intentNext.putExtra("file_name", fileNameToUpload.split("/")[1].split("\\.")[0] + "_compressed.jpg"); // Chỉ lấy tên file
+            // intentNext.putExtra("file_name", fileNameToUpload.split("/")[1].split("\\.")[0] + "_compressed.jpg"); // Chỉ lấy tên file
+            
+            // Trích xuất đúng tên file từ đường dẫn
+            String[] pathParts = fileNameToUpload.split("/");
+            String extractedFileName = pathParts[pathParts.length - 1].split("\\.")[0] + "_compressed.jpg";
+            intentNext.putExtra("file_name", extractedFileName);
+            
             startActivity(intentNext);
         });
     }
