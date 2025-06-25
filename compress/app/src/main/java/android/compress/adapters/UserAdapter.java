@@ -57,7 +57,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     public void filter(String text) {
         userList.clear();
         if (text.isEmpty()) {
-            userList.addAll(userListFull);
+
         } else {
             text = text.toLowerCase();
             for (FirebaseManager.User item : userListFull) {
