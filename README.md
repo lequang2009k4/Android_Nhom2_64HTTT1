@@ -6,7 +6,6 @@ Trong thời đại số hóa, **hình ảnh** là một loại dữ liệu chi�
 Tuy nhiên, sự gia tăng độ phân giải như 4K, 8K và 16K khiến các **tập tin ảnh trở nên cồng kềnh**, đặt ra thách thức lớn về **băng thông mạng** và **lưu trữ**. Đặc biệt trong các ứng dụng thời gian thực hoặc môi trường băng thông hạn chế, cần một giải pháp nén ảnh hiệu quả **giữ được chất lượng tối ưu nhưng giảm thiểu kích thước file.**
 
 Dự án này nhằm xây dựng một ứng dụng Android giúp:
-- Nén ảnh theo hai phương pháp: **Lossless** và **Lossy**
-- Cho phép người dùng điều chỉnh **mức độ nén**
+- Nén ảnh theo phương pháp: **Lossy**
 - **So sánh trực quan** ảnh trước và sau khi nén
 - **Upload** ảnh đã nén lên server hoặc lưu trữ đám mây
