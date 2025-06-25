@@ -1,3 +1,3 @@
 # ninja log v5
-0	488	1750817111273979829	CMakeFiles/imagecompressor.dir/imagecompressor.cpp.o	7f535dbd308f8742
-490	534	1750817111321037700	/Users/akai/AndroidStudioProjects/Android_Nhom2_64HTTT1/compress/app/build/intermediates/cxx/Debug/5i3r3619/obj/arm64-v8a/libimagecompressor.so	79cf462d762687df
+0	1270	7725231898422590	CMakeFiles/imagecompressor.dir/imagecompressor.cpp.o	a7bc654781d85c19
+1276	1379	7725231899560604	D:/Android_Nhom2_64HTTT1/compress/app/build/intermediates/cxx/Debug/5i3r3619/obj/arm64-v8a/libimagecompressor.so	98416d29482d84dc
