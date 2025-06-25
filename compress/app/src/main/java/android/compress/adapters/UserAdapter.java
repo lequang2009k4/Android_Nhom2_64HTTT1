@@ -1,5 +1,5 @@
 package android.compress.adapters;
-
+import android.compress.R;
 import android.compress.models.FirebaseManager;
 import android.view.LayoutInflater;
 import android.view.View;
