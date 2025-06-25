@@ -161,12 +161,7 @@ public class FileListActivity extends Activity {
             
             // Xử lý sự kiện khi nhấn vào item
             holder.itemView.setOnClickListener(v -> {
-                Intent intent = new Intent(FileListActivity.this, DetailActivity.class);
-                intent.putExtra("file_name", imageItem.getName());
-                intent.putExtra("file_size", imageItem.getSize());
-                intent.putExtra("upload_date", imageItem.getDate());
-                intent.putExtra("image_uri", imageItem.getStorageRef().toString());
-                startActivity(intent);
+                StorageManager.openDetailActivity(FileListActivity.this, imageItem);
             });
         }
         

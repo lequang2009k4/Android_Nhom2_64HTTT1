@@ -1,19 +1,19 @@
 {
   "buildFiles": [
-    "/Users/akai/AndroidStudioProjects/Android_Nhom2_64HTTT1/compress/app/src/main/cpp/CMakeLists.txt"
+    "D:\\Android_Nhom2_64HTTT1\\compress\\app\\src\\main\\cpp\\CMakeLists.txt"
   ],
   "cleanCommandsComponents": [
     [
-      "/Users/akai/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "C:\\Users\\Admin\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
       "-C",
-      "/Users/akai/AndroidStudioProjects/Android_Nhom2_64HTTT1/compress/app/.cxx/Debug/5i3r3619/arm64-v8a",
+      "D:\\Android_Nhom2_64HTTT1\\compress\\app\\.cxx\\Debug\\5i3r3619\\arm64-v8a",
       "clean"
     ]
   ],
   "buildTargetsCommandComponents": [
-    "/Users/akai/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "C:\\Users\\Admin\\AppData\\Local\\Android\\Sdk\\cmake\\3.22.1\\bin\\ninja.exe",
     "-C",
-    "/Users/akai/AndroidStudioProjects/Android_Nhom2_64HTTT1/compress/app/.cxx/Debug/5i3r3619/arm64-v8a",
+    "D:\\Android_Nhom2_64HTTT1\\compress\\app\\.cxx\\Debug\\5i3r3619\\arm64-v8a",
     "{LIST_OF_TARGETS_TO_BUILD}"
   ],
   "libraries": {
@@ -21,14 +21,14 @@
       "toolchain": "toolchain",
       "abi": "arm64-v8a",
       "artifactName": "imagecompressor",
-      "output": "/Users/akai/AndroidStudioProjects/Android_Nhom2_64HTTT1/compress/app/build/intermediates/cxx/Debug/5i3r3619/obj/arm64-v8a/libimagecompressor.so",
+      "output": "D:\\Android_Nhom2_64HTTT1\\compress\\app\\build\\intermediates\\cxx\\Debug\\5i3r3619\\obj\\arm64-v8a\\libimagecompressor.so",
       "runtimeFiles": []
     }
   },
   "toolchains": {
     "toolchain": {
-      "cCompilerExecutable": "/Users/akai/Library/Android/sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang.lld",
-      "cppCompilerExecutable": "/Users/akai/Library/Android/sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++.lld"
+      "cCompilerExecutable": "C:\\Users\\Admin\\AppData\\Local\\Android\\Sdk\\ndk\\27.0.12077973\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang.exe",
+      "cppCompilerExecutable": "C:\\Users\\Admin\\AppData\\Local\\Android\\Sdk\\ndk\\27.0.12077973\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
     }
   },
   "cFileExtensions": [],

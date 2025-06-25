@@ -2,6 +2,7 @@ package android.compress.models;
 
 import android.compress.R;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -298,48 +299,6 @@ public class StorageManager {
     }
     
     /**
-     * Nén ảnh từ Uri
-     */
-    public static void compressImage(Context context, Uri imageUri, int quality, CompressionCallback callback) {
-        try {
-            // Đọc ảnh từ Uri
-            InputStream inputStream = context.getContentResolver().openInputStream(imageUri);
-            Bitmap originalBitmap = BitmapFactory.decodeStream(inputStream);
-            
-            if (originalBitmap == null) {
-                runOnUiThread(() -> callback.onFailure(new IOException("Không thể đọc ảnh")));
-                return;
-            }
-            
-            // Tính kích thước gốc
-            ByteArrayOutputStream originalStream = new ByteArrayOutputStream();
-            originalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, originalStream);
-            int originalSize = originalStream.toByteArray().length;
-            
-            // Nén ảnh với chất lượng được chỉ định
-            ByteArrayOutputStream compressedStream = new ByteArrayOutputStream();
-            originalBitmap.compress(Bitmap.CompressFormat.JPEG, quality, compressedStream);
-            byte[] compressedData = compressedStream.toByteArray();
-            
-            // Tính tỷ lệ nén
-            int compressedSize = compressedData.length;
-            int sizeReduction = 100 - (int)((float)compressedSize / originalSize * 100);
-            
-            // Tạo bitmap từ dữ liệu đã nén và trả về ngay
-            runOnUiThread(() -> callback.onSuccess(
-                BitmapFactory.decodeByteArray(compressedData, 0, compressedData.length), 
-                sizeReduction));
-            
-        } catch (FileNotFoundException e) {
-            runOnUiThread(() -> callback.onFailure(new IOException("Không tìm thấy file ảnh")));
-        } catch (OutOfMemoryError e) {
-            runOnUiThread(() -> callback.onFailure(new IOException("Hết bộ nhớ khi xử lý ảnh")));
-        } catch (Exception e) {
-            runOnUiThread(() -> callback.onFailure(e));
-        }
-    }
-    
-    /**
      * Decode bitmap từ mảng byte với kích thước được thu nhỏ phù hợp
      */
     private static Bitmap decodeSampledBitmapFromByteArray(byte[] data, int reqWidth, int reqHeight) {
@@ -457,6 +416,89 @@ public class StorageManager {
         
         public String getInfo() {
             return size + " • " + date;
+        }
+    }
+
+    /**
+     * Tải ảnh đầy đủ từ Firebase Storage và mở DetailActivity
+     * Phương thức này giúp đồng nhất luồng 2 với luồng 1
+     */
+    public static void openDetailActivity(Context context, ImageItem imageItem) {
+        try {
+            // Tạo ProgressDialog
+            android.app.ProgressDialog progressDialog = new android.app.ProgressDialog(context);
+            progressDialog.setMessage("Đang tải ảnh...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+            
+            // Tải bytes từ Firebase 
+            final long ONE_MEGABYTE = 1024 * 1024 * 10; // 10MB max
+            imageItem.getStorageRef().getBytes(ONE_MEGABYTE)
+                .addOnSuccessListener(bytes -> {
+                    try {
+                        // Lưu vào cache directory để ContentResolver có thể đọc
+                        java.io.File cachePath = new java.io.File(context.getCacheDir(), "images");
+                        cachePath.mkdirs();
+                        java.io.File imageFile = new java.io.File(cachePath, imageItem.getName());
+                        
+                        java.io.FileOutputStream stream = new java.io.FileOutputStream(imageFile);
+                        stream.write(bytes);
+                        stream.close();
+                        
+                        // Tạo content Uri từ file đã lưu
+                        android.net.Uri contentUri = androidx.core.content.FileProvider.getUriForFile(
+                            context, 
+                            context.getPackageName() + ".fileprovider",
+                            imageFile);
+                        
+                        // Đóng dialog
+                        if (progressDialog != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
+                        
+                        // Chuẩn bị intent với ContentUri
+                        Intent intent = new Intent(context, android.compress.DetailActivity.class);
+                        intent.putExtra("file_name", imageItem.getName());
+                        intent.putExtra("file_size", imageItem.getSize());
+                        intent.putExtra("upload_date", imageItem.getDate());
+                        intent.putExtra("image_uri", contentUri.toString());
+                        
+                        // Cấp quyền đọc URI
+                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        
+                        context.startActivity(intent);
+                    } catch (Exception e) {
+                        // Fallback nếu lưu file lỗi
+                        if (progressDialog != null && progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
+                        
+                        Intent intent = new Intent(context, android.compress.DetailActivity.class);
+                        intent.putExtra("file_name", imageItem.getName());
+                        intent.putExtra("file_size", imageItem.getSize());
+                        intent.putExtra("upload_date", imageItem.getDate());
+                        context.startActivity(intent);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // Fallback nếu tải lỗi
+                    if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                    
+                    Intent intent = new Intent(context, android.compress.DetailActivity.class);
+                    intent.putExtra("file_name", imageItem.getName());
+                    intent.putExtra("file_size", imageItem.getSize());
+                    intent.putExtra("upload_date", imageItem.getDate());
+                    context.startActivity(intent);
+                });
+        } catch (Exception e) {
+            // Fallback nếu có lỗi
+            Intent intent = new Intent(context, android.compress.DetailActivity.class);
+            intent.putExtra("file_name", imageItem.getName());
+            intent.putExtra("file_size", imageItem.getSize());
+            intent.putExtra("upload_date", imageItem.getDate());
+            context.startActivity(intent);
         }
     }
 }
