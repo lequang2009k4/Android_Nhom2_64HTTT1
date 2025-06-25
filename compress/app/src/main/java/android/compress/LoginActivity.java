@@ -109,7 +109,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(FirebaseManager.User user) {
                 // Hiển thị userId để debug
-                Toast.makeText(LoginActivity.this, "UserID đã lấy được: " + user.getUserId(), Toast.LENGTH_LONG).show();
+//                Toast.makeText(LoginActivity.this, "UserID đã lấy được: " + user.getUserId(), Toast.LENGTH_LONG).show();
                 
                 // Lưu thông tin người dùng
                 UserManager.saveUserInfo(LoginActivity.this, user.getUserId(), user.getUsername());
