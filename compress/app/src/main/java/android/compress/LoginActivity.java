@@ -123,6 +123,7 @@ public class LoginActivity extends AppCompatActivity {
                 // Điều hướng dựa trên vai trò
                 if ("admin".equals(user.getRole())) {
                     startActivity(new Intent(LoginActivity.this, AdminDashboardActivity.class));
+                    Toast.makeText(LoginActivity.this, "Chào mừng Admin", Toast.LENGTH_SHORT).show();
                 } else {
                     startActivity(new Intent(LoginActivity.this, HomeActivity.class));
                     Toast.makeText(LoginActivity.this, "Chào mừng user " + user.getUsername(), Toast.LENGTH_SHORT).show();
